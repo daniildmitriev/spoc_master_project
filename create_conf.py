@@ -102,9 +102,9 @@ class Logger:
         return True if len(self.values) > 1e4 else False
     
 def create_conf(conf):
+    if conf.optimizer == "gd":
+        conf.batch_size = conf.n_train
     conf.directory = get_checkpoint_folder_name(conf)
     build_dirs(conf.directory)
     conf.logger = Logger(conf.directory)
-    if conf.optimizer == "gd":
-        conf.batch_size = conf.n_train
     return conf

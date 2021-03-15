@@ -7,7 +7,7 @@ def get_args():
     )
     
     parser.add_argument("--start_seed", type=int, default=5, help="random seed")
-    parser.add_argument("--n_runs", type=int, default=10, help="number of simulations")
+    parser.add_argument("--n_runs", type=int, default=20, help="number of simulations")
     parser.add_argument("--threshold", type=float, default=1e-8, 
                         help="stop when train loss is below threshold")
     

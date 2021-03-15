@@ -43,7 +43,7 @@ if __name__ == "__main__":
                                                       weights,
                                                       verbose=False)
         conf.logger.save_csv({'seed': seed, 
-                              'epoch': (len(train_losses) - 1) * conf.verbose_freq
+                              'epoch': (len(train_losses) - 1) * conf.verbose_freq,
                               'train loss': train_losses[-1], 
                               'test loss': test_losses[-1]})
         conf.logger.info(f"Run #{seed - conf.start_seed} completed")
