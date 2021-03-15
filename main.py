@@ -31,7 +31,7 @@ if __name__ == "__main__":
         weights = torch.randn(conf.n_hidden, 
                               conf.n_features, 
                               requires_grad=True)
-        conf.logger.info(f"initial weights: {weights[:5]}")
+        conf.logger.info(f"initial weights: {weights[0]}")
         optimizer = torch.optim.SGD([weights], 
                                     lr=conf.lr, 
                                     momentum=conf.momentum_factor, 

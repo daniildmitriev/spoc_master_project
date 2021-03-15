@@ -3,9 +3,6 @@ import torch
 from copy import copy
 from torch.utils.data import TensorDataset
 
-def loss_old(w, data_, labels_):
-    return torch.sum((labels_**2 - torch.matmul(w, data_)**2)**2)
-
 def create_dataset(n_train, n_test, n_features, activation='quadratic'):
     """
     params:
@@ -52,6 +49,7 @@ def check_success_sgd(conf,
                       verbose=False):
     train_losses = []
     test_losses = []
+    max_gradient = None
     for epoch in range(int(conf.n_epochs * np.log2(conf.n_features + 1))):
         train_loss = 0
         train_n_batches = 0
@@ -65,6 +63,11 @@ def check_success_sgd(conf,
             optimizer.step()
             train_loss += cur_loss.item()
             train_n_batches += 1
+            cur_max_gradient = np.max(np.abs(weights.grad))
+            if max_gradient is None:
+                max_gradient = cur_max_gradient
+            # perform exponential averaging of the max gradient value
+            max_gradient = 0.9 * max_gradient + 0.1 * cur_max_gradient
         if epoch % conf.verbose_freq == 0:
             test_loss = 0
             test_n_batches = 0
@@ -77,6 +80,7 @@ def check_success_sgd(conf,
             test_loss /= test_n_batches
             train_loss /= train_n_batches
             conf.logger.info(f"epoch: {epoch} \t train loss: {train_loss:.10f} \t test loss: {test_loss:.10f}")
+            conf.logger.info(f"max gradient value: {max_gradient}")
             train_losses.append(train_loss)
             test_losses.append(test_loss)
             if train_loss < conf.threshold:

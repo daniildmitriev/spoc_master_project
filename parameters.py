@@ -10,10 +10,14 @@ def get_args():
     parser.add_argument("--n_runs", type=int, default=20, help="number of simulations")
     parser.add_argument("--threshold", type=float, default=1e-8, 
                         help="stop when train loss is below threshold")
+    parser.add_argument("--gradientthreshold", type=float, default=1e-8, 
+                        help="stop when max absolute gradient component is below threshold")
     
     # simulation scheme
-    parser.add_argument("--n_train", type=int, help="number of samples in train dataset")
-    parser.add_argument("--n_test", type=int, help="number of samples in test dataset")
+    parser.add_argument("--n_train", type=int, default=None, help="number of samples in train dataset")
+    parser.add_argument("--n_test", type=int, default=None, help="number of samples in test dataset")
+    parser.add_argument("--sample_complexity", type=float, default=3.0, 
+                        help="ratio of number of samples to number of features")
     parser.add_argument("--n_features", type=int, help="number of features")
     parser.add_argument("--n_hidden", type=int, help="number of hidden units")
     
