@@ -63,11 +63,11 @@ def check_success_sgd(conf,
             optimizer.step()
             train_loss += cur_loss.item()
             train_n_batches += 1
-            cur_max_gradient = np.max(np.abs(weights.grad))
+            cur_max_gradient = torch.max(torch.abs(weights.grad))
             if max_gradient is None:
                 max_gradient = cur_max_gradient
             # perform exponential averaging of the max gradient value
-            max_gradient = 0.9 * max_gradient + 0.1 * cur_max_gradient
+            max_gradient = 0.8 * max_gradient + 0.2 * cur_max_gradient
         if epoch % conf.verbose_freq == 0:
             test_loss = 0
             test_n_batches = 0
@@ -79,8 +79,9 @@ def check_success_sgd(conf,
                 test_n_batches += 1
             test_loss /= test_n_batches
             train_loss /= train_n_batches
-            conf.logger.info(f"epoch: {epoch} \t train loss: {train_loss:.10f} \t test loss: {test_loss:.10f}")
-            conf.logger.info(f"max gradient value: {max_gradient}")
+            to_log = f"epoch: {epoch} \t train loss: {train_loss:.10f} \t test loss: {test_loss:.10f}"
+            to_log += f"avg max gradient value: {max_gradient}, cur max gradient value: {cur_max_gradient}"
+            conf.logger.info(to_log)
             train_losses.append(train_loss)
             test_losses.append(test_loss)
             if train_loss < conf.threshold:
