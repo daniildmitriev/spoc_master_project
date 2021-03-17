@@ -8,10 +8,12 @@ def get_args():
     
     parser.add_argument("--start_seed", type=int, default=5, help="random seed")
     parser.add_argument("--n_runs", type=int, default=20, help="number of simulations")
-    parser.add_argument("--threshold", type=float, default=1e-8, 
-                        help="stop when train loss is below threshold")
-    parser.add_argument("--gradient_threshold", type=float, default=1e-8, 
+    parser.add_argument("--threshold", type=float, default=1e-5, 
+                        help="stop when train error is below threshold")
+    parser.add_argument("--gradient_threshold", type=float, default=1e-3, 
                         help="stop when max absolute gradient component is below threshold")
+    parser.add_argument("--gradient_threshold", type=float, default=1e-3, 
+                        help="stop when test error is below threshold")
     
     # simulation scheme
     parser.add_argument("--n_train", type=int, default=None, help="number of samples in train dataset")

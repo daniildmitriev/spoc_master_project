@@ -94,6 +94,10 @@ def check_success_sgd(conf,
             conf.logger.info(to_log)
             train_losses.append(train_loss)
             test_losses.append(test_loss)
-            if train_loss < conf.threshold:
+            if train_error < conf.threshold:
+                return train_losses, test_losses
+            if test_error < conf.test_threshold:
+                return train_losses, test_losses
+            if max_gradient < conf.gradient_threshold:
                 return train_losses, test_losses
     return train_losses, test_losses
