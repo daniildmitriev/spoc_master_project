@@ -12,7 +12,7 @@ def get_args():
                         help="stop when train error is below threshold")
     parser.add_argument("--gradient_threshold", type=float, default=1e-3, 
                         help="stop when max absolute gradient component is below threshold")
-    parser.add_argument("--gradient_threshold", type=float, default=1e-3, 
+    parser.add_argument("--test_threshold", type=float, default=1e-3, 
                         help="stop when test error is below threshold")
     
     # simulation scheme
