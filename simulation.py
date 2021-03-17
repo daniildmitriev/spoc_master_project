@@ -41,6 +41,9 @@ def model(data, weights):
 def loss(y_pred, y_true):
     return torch.sum((y_pred - y_true)**2)
 
+def error(y_pred, y_true):
+    return torch.mean((y_pred - y_true)**2)
+
 def check_success_sgd(conf,
                       train_loader,
                       test_loader,
@@ -52,6 +55,7 @@ def check_success_sgd(conf,
     max_gradient = None
     for epoch in range(int(conf.n_epochs * np.log2(conf.n_features + 1))):
         train_loss = 0
+        train_error = 0 
         train_n_batches = 0
         for batch_data, batch_labels in train_loader:
             batch_data = batch_data.T
@@ -62,6 +66,7 @@ def check_success_sgd(conf,
             cur_loss.backward()
             optimizer.step()
             train_loss += cur_loss.item()
+            train_error += error(y_pred, batch_labels).item()
             train_n_batches += 1
             cur_max_gradient = torch.max(torch.abs(weights.grad))
             if max_gradient is None:
@@ -70,17 +75,22 @@ def check_success_sgd(conf,
             max_gradient = 0.8 * max_gradient + 0.2 * cur_max_gradient
         if epoch % conf.verbose_freq == 0:
             test_loss = 0
+            test_error = 0
             test_n_batches = 0
             for batch_data, batch_labels in test_loader:
                 batch_data = batch_data.T
                 batch_labels = batch_labels.T
                 y_pred = model(batch_data, weights)
                 test_loss += loss(y_pred, batch_labels).item()
+                test_error += error(y_pred, batch_labels).item()
                 test_n_batches += 1
             test_loss /= test_n_batches
             train_loss /= train_n_batches
-            to_log = f"epoch: {epoch} \t train loss: {train_loss:.10f} \t test loss: {test_loss:.10f}"
-            to_log += f"avg max gradient value: {max_gradient}, cur max gradient value: {cur_max_gradient}"
+            test_error /= test_n_batches
+            train_error /= train_n_batches
+            to_log = f"#E: {epoch} \t"
+            to_log += f"Train E: {train_error:.5f} \t Test E: {test_error:.5f}"
+            to_log += f"\t Avg Max Grad: {max_gradient:.3f} \t Cur Max Grad: {cur_max_gradient:.3f}"
             conf.logger.info(to_log)
             train_losses.append(train_loss)
             test_losses.append(test_loss)

@@ -11,7 +11,7 @@ def get_checkpoint_folder_name(conf):
     # concat them together.
     directory = f"{conf.root_dir}/"
     directory += f"{time.time():.0f}_optim_{conf.optimizer}_"
-    directory += f"samplecomplexity_{conf.n_train}_nfeatures_{conf.n_features}_"
+    directory += f"samplecomplexity_{conf.sample_complexity}_nfeatures_{conf.n_features}_"
     directory += f"nhidden_{conf.n_hidden}_batchsize_{conf.batch_size}_"
     directory += f"lr_{conf.lr}_momentum_{conf.momentum_factor}_"
     directory += f"nesterov_{conf.use_nesterov}_nepochs_{conf.n_epochs}_"

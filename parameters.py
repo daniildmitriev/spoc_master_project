@@ -10,7 +10,7 @@ def get_args():
     parser.add_argument("--n_runs", type=int, default=20, help="number of simulations")
     parser.add_argument("--threshold", type=float, default=1e-8, 
                         help="stop when train loss is below threshold")
-    parser.add_argument("--gradientthreshold", type=float, default=1e-8, 
+    parser.add_argument("--gradient_threshold", type=float, default=1e-8, 
                         help="stop when max absolute gradient component is below threshold")
     
     # simulation scheme
@@ -23,7 +23,7 @@ def get_args():
     
     
     parser.add_argument("--n_epochs", default=10000, type=int, 
-                        help="number of epochs (will be multiplied by log(n_features)")
+                        help="number of epochs (will be multiplied by log(n_features))")
     parser.add_argument("--batch_size", default=32, type=int)
 
     # learning rate scheme
