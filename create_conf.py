@@ -120,7 +120,7 @@ def create_conf(conf):
         lr_over_tau = conf.lr / conf.persistence_time
         assert lr_over_tau <= 1.0
         assert (1 - conf.batch_size) / conf.batch_size * lr_over_tau <= 1.0
-        conf.log("Persistent SGD switch probabilities:")
-        conf.log(f"from 0 to 1: {lr_over_tau}")
-        conf.log(f"from 1 to 0: {(1 - conf.batch_size) / conf.batch_size * lr_over_tau}")
+        conf.logger.info("Persistent SGD switch probabilities:")
+        conf.logger.info(f"from 0 to 1: {lr_over_tau}")
+        conf.logger.info(f"from 1 to 0: {(1 - conf.batch_size) / conf.batch_size * lr_over_tau}")
     return conf
