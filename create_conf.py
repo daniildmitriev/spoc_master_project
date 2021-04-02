@@ -4,26 +4,31 @@ import logging
 import os
 import json
 
-def is_zero_file(fpath):  
+
+def is_zero_file(fpath):
     return not os.path.isfile(fpath) or os.path.getsize(fpath) == 0
+
 
 def get_checkpoint_folder_name(conf):
     # concat them together.
-    directory = f"{conf.root_dir}/"
-    directory += f"{time.time():.0f}_optim_{conf.optimizer}_"
-    directory += f"samplecomplexity_{conf.sample_complexity}_nfeatures_{conf.n_features}_"
-    directory += f"nhidden_{conf.n_hidden}_batchsize_{conf.batch_size}_"
-    directory += f"lr_{conf.lr}_momentum_{conf.momentum_factor}_"
-    directory += f"nesterov_{conf.use_nesterov}_nepochs_{conf.n_epochs}_"
-    directory += f"weightdecay_{conf.weight_decay}_ntest_{conf.n_test}_"
-    directory += f"startseed_{conf.start_seed}_nruns_{conf.n_runs}"
+    directory = f"{conf.root_dir}/{time.time():.0f}_optim_{conf.optimizer}_"
+    directory += f"tau_{conf.persistence_time}_"
+    directory += f"samplecomplexity_{conf.sample_complexity}_"
+    directory += f"nfeatures_{conf.n_features}_nhidden_{conf.n_hidden}_"
+    directory += f"batchsize_{conf.batch_size}_lr_{conf.lr}_"
+    directory += f"momentum_{conf.momentum_factor}_nesterov_{conf.use_nesterov}_"
+    directory += f"nepochs_{conf.n_epochs}_weightdecay_{conf.weight_decay}_"
+    directory += f"ntest_{conf.n_test}_startseed_{conf.start_seed}_"
+    directory += f"nruns_{conf.n_runs}"
     return directory
+
 
 def build_dirs(path):
     try:
         os.makedirs(path)
     except Exception as e:
         print(" encounter error: {}".format(e))
+
 
 class Logger:
     """
@@ -80,7 +85,7 @@ class Logger:
 
     def save_txt(self, value):
         utils.write_txt(value + "\n", self.file_txt, type="a")
-    
+
     def save_csv(self, to_report):
         files = open(self.file_csv, "a")
         if is_zero_file(self.file_csv):
@@ -99,14 +104,23 @@ class Logger:
 
     def meet_cache_limit(self):
         return True if len(self.values) > 1e4 else False
-    
+
+
 def create_conf(conf):
     conf.n_train = int(conf.sample_complexity * conf.n_features)
     if conf.n_test is None:
         conf.n_test = conf.n_train
     if conf.optimizer == "gd":
         conf.batch_size = conf.n_train
+
     conf.directory = get_checkpoint_folder_name(conf)
     build_dirs(conf.directory)
     conf.logger = Logger(conf.directory)
+    if conf.optimizer == "p-sgd":
+        lr_over_tau = conf.lr / conf.persistence_time
+        assert lr_over_tau <= 1.0
+        assert (1 - conf.batch_size) / conf.batch_size * lr_over_tau <= 1.0
+        conf.log("Persistent SGD switch probabilities:")
+        conf.log(f"from 0 to 1: {lr_over_tau}")
+        conf.log(f"from 1 to 0: {(1 - conf.batch_size) / conf.batch_size * lr_over_tau}")
     return conf
