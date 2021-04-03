@@ -54,7 +54,7 @@ class PoisSampler(Sampler[int]):
 
     def __iter__(self):
         for _ in range(self.num_iters):
-            yield np.nonzero(self.cur_samples)
+            yield np.nonzero(self.cur_samples)[0]
             from_zero_to_one = sps.bernoulli.rvs(p=self.eta / self.tau, size=self.n)
             from_one_to_zero = sps.bernoulli.rvs(
                 p=(1 - self.b) * self.eta / (self.b * self.tau), size=self.n
