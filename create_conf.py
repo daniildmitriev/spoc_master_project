@@ -122,5 +122,5 @@ def create_conf(conf):
         assert (1 - conf.batch_size) / conf.batch_size * lr_over_tau <= 1.0
         conf.logger.info("Persistent SGD switch probabilities:")
         conf.logger.info(f"from 0 to 1: {lr_over_tau}")
-        conf.logger.info(f"from 1 to 0: {(1 - conf.batch_size) / conf.batch_size * lr_over_tau}")
+        conf.logger.info(f"from 1 to 0: {(conf.n_train - 1) / conf.batch_size * lr_over_tau}")
     return conf
