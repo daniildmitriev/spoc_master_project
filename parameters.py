@@ -43,6 +43,17 @@ def get_args():
     )
     parser.add_argument("--n_features", type=int, help="number of features")
     parser.add_argument("--n_hidden", type=int, help="number of hidden units")
+    parser.add_argument(
+        "--activation", 
+        type=str, 
+        default="quadratic", 
+        help='"quadratic" for squared labels, "absolute" for absolute values, \
+        "symmetric-door" for symmetric door channel'
+    )
+    parser.add_argument("--symmetric_door_channel_K", 
+                        type=float, 
+                        default=0,
+                        help="K in the formula of symmetric door function")
 
     parser.add_argument(
         "--n_epochs",

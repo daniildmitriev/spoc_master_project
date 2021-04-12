@@ -15,7 +15,11 @@ if __name__ == "__main__":
     np.random.seed(conf.start_seed)
     torch.manual_seed(conf.start_seed)
     train_data, train_labels, test_data, test_labels = create_dataset(
-        conf.n_train, conf.n_test, conf.n_features
+        conf.n_train, 
+        conf.n_test, 
+        conf.n_features,
+        activation=self.activation,
+        K=self.symmetric_door_channel_K
     )
     if conf.optimizer == "p-sgd":
         pois_sampler = PoisSampler(

@@ -4,7 +4,7 @@ import scipy.stats as sps
 from torch.utils.data import Sampler
 
 
-def create_dataset(n_train, n_test, n_features, activation="quadratic"):
+def create_dataset(n_train, n_test, n_features, activation="quadratic", K=None):
     """
     params:
     n_train: number of samples in the train dataset
@@ -21,12 +21,17 @@ def create_dataset(n_train, n_test, n_features, activation="quadratic"):
         0, std=1 / np.sqrt(n_features), size=(n_features, n_train)
     )
     test_data = torch.normal(0, std=1 / np.sqrt(n_features), size=(n_features, n_test))
+    train_mult = teacher_weights.matmul(train_data)
+    test_mult = teacher_weights.matmul(test_data)
     if activation == "quadratic":
-        train_labels = teacher_weights.matmul(train_data) ** 2
-        test_labels = teacher_weights.matmul(test_data) ** 2
+        train_labels = train_mult ** 2
+        test_labels = train_mult ** 2
     elif activation == "absolute":
-        train_labels = torch.abs(teacher_weights.matmul(train_data))
-        test_labels = torch.abs(teacher_weights.matmul(test_data))
+        train_labels = torch.abs(train_mult)
+        test_labels = torch.abs(test_mult)
+    elif activation == "symmetric-door":
+        train_labels = torch.sign(torch.abs(train_mult) - K)
+        test_labels = torch.sign(torch.abs(test_mult) - K)
     return train_data, train_labels, test_data, test_labels
 
 class PoisSampler(Sampler[int]):
