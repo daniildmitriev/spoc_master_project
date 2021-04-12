@@ -18,8 +18,8 @@ if __name__ == "__main__":
         conf.n_train, 
         conf.n_test, 
         conf.n_features,
-        activation=self.activation,
-        K=self.symmetric_door_channel_K
+        activation=conf.activation,
+        K=conf.symmetric_door_channel_K
     )
     if conf.optimizer == "p-sgd":
         pois_sampler = PoisSampler(
