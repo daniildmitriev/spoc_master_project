@@ -4,7 +4,7 @@ from copy import copy
 from torch.utils.data import TensorDataset
 
 
-def model(data, weights):
+def model(data, weights, activation='quadratic'):
     """
     let:
     N be the number of samples
@@ -14,15 +14,31 @@ def model(data, weights):
     data: input data, P x N
     weights: M x P
     """
-    return torch.mean(torch.matmul(weights, data) ** 2, axis=0)
+    if activation == 'quadratic':
+        return torch.mean(torch.matmul(weights, data) ** 2, axis=0)
+    elif activation == 'absolute':
+        return torch.mean(torch.abs(torch.matmul(weights, data)), axis=0)
+    
+    return torch.mean(torch.matmul(weights, data), axis=0)
 
 
-def loss(y_pred, y_true):
-    return torch.sum((y_pred - y_true) ** 2)
+def loss(conf, y_pred, y_true):
+    if conf.loss == 'mse':
+        return torch.sum((y_pred - y_true) ** 2)
+    elif conf.loss == 'square':
+        activation_eps = torch.sqrt(y_pred ** 2 + conf.loss_eps) - conf.symmetric_door_channel_K
+        return 0.5 * torch.sum((y_true - activation_eps) ** 2)
+    elif conf.loss == 'logloss':
+        activation_eps = torch.sqrt(y_pred ** 2 + conf.loss_eps) - conf.symmetric_door_channel_K
+        return -torch.log(1 + torch.exp(-y_true * activation_eps))
+    
 
 
-def error(y_pred, y_true):
-    return torch.mean((y_pred - y_true) ** 2)
+def error(conf, y_pred, y_true):
+    if conf.loss == 'mse':
+        return torch.mean((y_pred - y_true) ** 2)
+    activation_eps = torch.abs(y_pred) - conf.symmetric_door_channel_K
+    return 0.5 * torch.mean((torch.sign(activation_eps) - y_true)**2)
 
 
 def check_success_sgd(
@@ -40,8 +56,11 @@ def check_success_sgd(
             batch_data = batch_data.T
             batch_labels = batch_labels.T
             optimizer.zero_grad()
-            y_pred = model(batch_data, weights)
-            loss(y_pred, batch_labels).backward()
+            y_pred = model(batch_data, weights, conf.activation)
+            loss(y_pred,
+                 batch_labels,
+                 conf.activation,
+                 conf.symmetric_door_channel_K).backward()
             optimizer.step()
             train_error += error(y_pred, batch_labels).item()
             train_n_batches += 1
@@ -57,7 +76,7 @@ def check_success_sgd(
         for batch_data, batch_labels in test_loader:
             batch_data = batch_data.T
             batch_labels = batch_labels.T
-            y_pred = model(batch_data, weights)
+            y_pred = model(batch_data, weights, conf.activation)
             test_error += error(y_pred, batch_labels).item()
             test_n_batches += 1
         test_error /= test_n_batches

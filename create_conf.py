@@ -12,13 +12,12 @@ def is_zero_file(fpath):
 def get_checkpoint_folder_name(conf):
     # concat them together.
     directory = f"{conf.root_dir}/{time.time():.0f}_optim_{conf.optimizer}_"
-    directory += f"tau_{conf.persistence_time}_activation_{conf.activation}_"
-    directory += f"symmetricdoork_{conf.symmetric_door_channel_K}_"
+    directory += f"activation_{conf.activation}_loss_{conf.loss}_"
     directory += f"samplecomplexity_{conf.sample_complexity}_"
     directory += f"nfeatures_{conf.n_features}_nhidden_{conf.n_hidden}_"
     directory += f"batchsize_{conf.batch_size}_lr_{conf.lr}_"
     directory += f"momentum_{conf.momentum_factor}_nesterov_{conf.use_nesterov}_"
-    directory += f"nepochs_{conf.n_epochs}_weightdecay_{conf.weight_decay}_"
+    directory += f"nepochs_{conf.n_epochs}_"
     directory += f"ntest_{conf.n_test}_startseed_{conf.start_seed}_"
     directory += f"nruns_{conf.n_runs}"
     return directory
@@ -124,4 +123,5 @@ def create_conf(conf):
         conf.logger.info("Persistent SGD switch probabilities:")
         conf.logger.info(f"from 0 to 1: {lr_over_tau}")
         conf.logger.info(f"from 1 to 0: {(conf.n_train - 1) / conf.batch_size * lr_over_tau}")
+    conf.logger.info(f"Loss function: {conf.loss}, with epsilong: {conf.loss_eps}")
     return conf

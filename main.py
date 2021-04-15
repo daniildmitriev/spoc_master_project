@@ -55,6 +55,10 @@ if __name__ == "__main__":
         conf.logger.save_csv(
             {
                 "seed": seed,
+                "loss_eps": conf.loss_eps,
+                "tau": conf.persistent_time,
+                "symmetric_door_k": conf.symmetric_door_channel_K,
+                "weightdecay": conf.weight_decay,
                 "epoch": len(train_errors),
                 "train error": train_errors[-1],
                 "test error": test_errors[-1],

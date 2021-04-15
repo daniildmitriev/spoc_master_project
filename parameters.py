@@ -54,6 +54,18 @@ def get_args():
                         type=float, 
                         default=0,
                         help="K in the formula of symmetric door function")
+    parser.add_argument(
+        "--loss",
+        type=str,
+        default="mse",
+        help='"mse" for standard quadratic loss, \
+              "square" same for symmetric door channels preactivations \
+              "logloss" for log loss.')
+    parser.add_argument(
+        "--loss_eps",
+        type=float,
+        default=1e-8,
+        help='small value used for smoothing loss functions')
 
     parser.add_argument(
         "--n_epochs",
