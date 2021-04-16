@@ -57,10 +57,7 @@ def check_success_sgd(
             batch_labels = batch_labels.T
             optimizer.zero_grad()
             y_pred = model(batch_data, weights, conf.activation)
-            loss(y_pred,
-                 batch_labels,
-                 conf.activation,
-                 conf.symmetric_door_channel_K).backward()
+            loss(conf, y_pred, batch_labels).backward()
             optimizer.step()
             train_error += error(y_pred, batch_labels).item()
             train_n_batches += 1
@@ -77,7 +74,7 @@ def check_success_sgd(
             batch_data = batch_data.T
             batch_labels = batch_labels.T
             y_pred = model(batch_data, weights, conf.activation)
-            test_error += error(y_pred, batch_labels).item()
+            test_error += error(conf, y_pred, batch_labels).item()
             test_n_batches += 1
         test_error /= test_n_batches
         train_error /= train_n_batches
