@@ -25,7 +25,7 @@ def create_dataset(n_train, n_test, n_features, activation="quadratic", K=None):
     test_mult = teacher_weights.matmul(test_data)
     if activation == "quadratic":
         train_labels = train_mult ** 2
-        test_labels = train_mult ** 2
+        test_labels = test_mult ** 2
     elif activation == "absolute":
         train_labels = torch.abs(train_mult)
         test_labels = torch.abs(test_mult)
