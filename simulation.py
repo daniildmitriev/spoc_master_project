@@ -59,7 +59,7 @@ def check_success_sgd(
             y_pred = model(batch_data, weights, conf.activation)
             loss(conf, y_pred, batch_labels).backward()
             optimizer.step()
-            train_error += error(y_pred, batch_labels).item()
+            train_error += error(conf, y_pred, batch_labels).item()
             train_n_batches += 1
             cur_max_gradient = torch.max(torch.abs(weights.grad))
             if max_gradient is None:
