@@ -44,11 +44,13 @@ def error(conf, y_pred, y_true):
 def check_success_sgd(
     conf, train_loader, test_loader, optimizer, weights, verbose=False
 ):
+    train_losses = []
     train_errors = []
     test_errors = []
     max_gradient = None
     for epoch in range(int(conf.n_epochs * np.log2(conf.n_features + 1))):
         train_error = 0
+        train_loss = 0
         train_n_batches = 0
 
         # Train 
@@ -57,7 +59,9 @@ def check_success_sgd(
             batch_labels = batch_labels.T
             optimizer.zero_grad()
             y_pred = model(batch_data, weights, conf.activation)
-            loss(conf, y_pred, batch_labels).backward()
+            cur_loss = loss(conf, y_pred, batch_labels)
+            cur_loss.backward()
+            train_loss += cur_loss.item()
             optimizer.step()
             train_error += error(conf, y_pred, batch_labels).item()
             train_n_batches += 1
@@ -78,11 +82,13 @@ def check_success_sgd(
             test_n_batches += 1
         test_error /= test_n_batches
         train_error /= train_n_batches
+        train_loss /= train_n_batches
         if epoch % conf.verbose_freq == 0:
-            to_log = f"#E: {epoch} \t"
-            to_log += f"Train E: {train_error:.5f} \t Test E: {test_error:.5f}"
-            to_log += f"\t Avg Max Grad: {max_gradient:.8f}"
+            to_log = f"#E: {epoch} \t Train L: {train_loss:.5f} \t"
+            to_log += f"Train E: {train_error:.3f} \t Test E: {test_error:.3f} \t"
+            to_log += f"Grad: {max_gradient:.6f}"
             conf.logger.info(to_log)
+        train_losses.append(train_loss)
         train_errors.append(train_error)
         test_errors.append(test_error)
         if (
@@ -90,5 +96,5 @@ def check_success_sgd(
             or test_error < conf.test_threshold
             or max_gradient < conf.gradient_threshold
         ):
-            return train_errors, test_errors
-    return train_errors, test_errors
+            return train_losses, train_errors, test_errors
+    return train_losses, train_errors, test_errors

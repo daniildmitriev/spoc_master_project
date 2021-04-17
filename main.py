@@ -49,7 +49,7 @@ if __name__ == "__main__":
             momentum=conf.momentum_factor,
             weight_decay=conf.weight_decay,
         )
-        train_errors, test_errors = check_success_sgd(
+        train_losses, train_errors, test_errors = check_success_sgd(
             conf, train_loader, test_loader, optimizer, weights, verbose=False
         )
         conf.logger.save_csv(
@@ -60,6 +60,7 @@ if __name__ == "__main__":
                 "symmetric_door_k": conf.symmetric_door_channel_K,
                 "weightdecay": conf.weight_decay,
                 "epoch": len(train_errors),
+                "train loss": train_losses[-1],
                 "train error": train_errors[-1],
                 "test error": test_errors[-1],
             }
