@@ -56,7 +56,7 @@ if __name__ == "__main__":
             {
                 "seed": seed,
                 "loss_eps": conf.loss_eps,
-                "tau": conf.persistent_time,
+                "tau": conf.persistence_time,
                 "symmetric_door_k": conf.symmetric_door_channel_K,
                 "weightdecay": conf.weight_decay,
                 "epoch": len(train_errors),
