@@ -30,7 +30,7 @@ def loss(conf, y_pred, y_true):
         return 0.5 * torch.sum((y_true - activation_eps) ** 2)
     elif conf.loss == 'logloss':
         activation_eps = torch.sqrt(y_pred ** 2 + conf.loss_eps) - conf.symmetric_door_channel_K
-        return -torch.sum(torch.log(1 + torch.exp(-y_true * activation_eps)))
+        return torch.sum(torch.log(1 + torch.exp(-y_true * activation_eps)))
     
 
 
