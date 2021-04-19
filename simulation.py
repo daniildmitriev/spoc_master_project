@@ -48,6 +48,8 @@ def check_success_sgd(
     train_errors = []
     test_errors = []
     max_gradient = None
+    best_loss = None
+    best_loss_e = None
     for epoch in range(int(conf.n_epochs * np.log2(conf.n_features + 1))):
         train_error = 0
         train_loss = 0
@@ -70,7 +72,6 @@ def check_success_sgd(
                 max_gradient = cur_max_gradient
             # perform exponential averaging of the max gradient value
             max_gradient = 0.9 * max_gradient + 0.1 * cur_max_gradient
-
         # Test
         test_error = 0
         test_n_batches = 0
@@ -91,6 +92,11 @@ def check_success_sgd(
         train_losses.append(train_loss)
         train_errors.append(train_error)
         test_errors.append(test_error)
+        if best_loss is None or train_loss < best_loss:
+            best_loss = train_loss
+            best_loss_e = epoch
+        elif epoch - best_loss_e > 1000:
+            return train_losses, train_errors, test_errors
         if (
             train_error < conf.train_threshold
             or test_error < conf.test_threshold
