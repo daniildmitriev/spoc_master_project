@@ -48,6 +48,7 @@ if __name__ == "__main__":
             lr=conf.lr,
             momentum=conf.momentum_factor,
             weight_decay=conf.weight_decay,
+            nesterov=conf.use_nesterov
         )
         train_losses, train_errors, test_errors = check_success_sgd(
             conf, train_loader, test_loader, optimizer, weights, verbose=False
