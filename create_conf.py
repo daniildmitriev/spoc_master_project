@@ -120,7 +120,7 @@ def create_conf(conf):
     conf.directory = get_checkpoint_folder_name(conf)
     build_dirs(conf.directory)
     conf.logger = Logger(conf.directory)
-    if conf.optimizer == "p-sgd":l
+    if conf.optimizer == "p-sgd":
         lr_over_tau = conf.lr / conf.persistence_time
         conf.logger.info("Persistent SGD switch probabilities:")
         conf.logger.info(f"from 0 to 1: {lr_over_tau}")
