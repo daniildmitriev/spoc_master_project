@@ -114,13 +114,13 @@ def create_conf(conf):
         conf.n_test = conf.n_train
     if conf.optimizer == "gd":
         conf.batch_size = conf.n_train
-    if conf.optimizer == "p-sgd" and conf.psgd_adaptive_bs:
+    if (conf.optimizer in ["p-sgd", "sgd"]) and conf.psgd_adaptive_bs:
         conf.batch_size = int(conf.batch_size * conf.sample_complexity)
 
     conf.directory = get_checkpoint_folder_name(conf)
     build_dirs(conf.directory)
     conf.logger = Logger(conf.directory)
-    if conf.optimizer == "p-sgd":
+    if conf.optimizer == "p-sgd":l
         lr_over_tau = conf.lr / conf.persistence_time
         conf.logger.info("Persistent SGD switch probabilities:")
         conf.logger.info(f"from 0 to 1: {lr_over_tau}")
