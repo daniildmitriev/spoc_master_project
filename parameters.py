@@ -101,6 +101,12 @@ def get_args():
     parser.add_argument(
         "--persistence_time", default=1.0, type=float, help="persistence time"
     )
+    parser.add_argument(
+        "--psgd_adaptive_bs", 
+        default=False, 
+        type=str2bool, 
+        help="if True, multiply batch_size by sample complexity"
+    )
 
     conf = parser.parse_args()
     return conf

@@ -48,9 +48,11 @@ class Logger:
         self.values = []
 
     def log(self, *messages):
+        print(*messages)
         logging.info(*messages)
 
     def info(self, *messages):
+        print(*messages)
         logging.info(*messages)
 
     def log_metric(self, name, values, tags, display=False):
@@ -117,11 +119,14 @@ def create_conf(conf):
     build_dirs(conf.directory)
     conf.logger = Logger(conf.directory)
     if conf.optimizer == "p-sgd":
+        if conf.psgd_adaptive_bs:
+            conf.batch_size = int(conf.batch_size * conf.sample_complexity)
         lr_over_tau = conf.lr / conf.persistence_time
-        assert lr_over_tau <= 1.0
-        assert (1 - conf.batch_size) / conf.batch_size * lr_over_tau <= 1.0
         conf.logger.info("Persistent SGD switch probabilities:")
         conf.logger.info(f"from 0 to 1: {lr_over_tau}")
-        conf.logger.info(f"from 1 to 0: {(conf.n_train - 1) / conf.batch_size * lr_over_tau}")
+        conf.logger.info(f"from 1 to 0: {(conf.n_train - conf.batch_size) / conf.batch_size * lr_over_tau}")
+        assert lr_over_tau <= 1.0
+        assert lr_over_tau * (1 - conf.batch_size) / conf.batch_size  <= 1.0
+
     conf.logger.info(f"Loss function: {conf.loss}, with epsilong: {conf.loss_eps}")
     return conf
