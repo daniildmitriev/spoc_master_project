@@ -4,7 +4,7 @@ import scipy.stats as sps
 from torch.utils.data import Sampler
 
 
-def create_dataset(n_train, n_test, n_features, activation="quadratic", K=None):
+def create_dataset(n_train, n_test, n_features, data_type="quadratic", K=None):
     """
     params:
     n_train: number of samples in the train dataset
@@ -23,13 +23,13 @@ def create_dataset(n_train, n_test, n_features, activation="quadratic", K=None):
     test_data = torch.normal(0, std=1 / np.sqrt(n_features), size=(n_features, n_test))
     train_mult = teacher_weights.matmul(train_data)
     test_mult = teacher_weights.matmul(test_data)
-    if activation == "quadratic":
+    if data_type == "quadratic":
         train_labels = train_mult ** 2
         test_labels = test_mult ** 2
-    elif activation == "absolute":
+    elif data_type == "absolute":
         train_labels = torch.abs(train_mult)
         test_labels = torch.abs(test_mult)
-    elif activation == "symmetric-door":
+    elif data_type == "symmetric-door":
         train_labels = torch.sign(torch.abs(train_mult) - K)
         test_labels = torch.sign(torch.abs(test_mult) - K)
     return train_data, train_labels, test_data, test_labels
