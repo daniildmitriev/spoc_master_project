@@ -76,9 +76,9 @@ def check_success_sgd(
                 # projecting on spherel
             if conf.project_on_sphere:
                 with torch.no_grad():
-                    weights_norm = torch.linalg.norm(weights, axis=1)
-                    weights = torch.div(weights, torch.unsqueeze(weights_norm, 1))
-                    weights *= np.sqrt(conf.n_features)
+                    w = weights.data
+                    w_norm = torch.linalg.norm(w, axis=1)
+                    w.div_(torch.unsqueeze(w_norm, 1) / np.sqrt(conf.n_features)
         # Test
         test_error = 0
         test_n_batches = 0
