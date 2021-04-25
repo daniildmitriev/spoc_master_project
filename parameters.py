@@ -50,6 +50,7 @@ def get_args():
         help="if True, after each gradient step, project weights on the sphere with R=sqrt(N)"
     )
     
+    
     parser.add_argument(
         "--data_type", 
         type=str, 
@@ -87,6 +88,15 @@ def get_args():
         type=int,
         help="number of epochs (will be multiplied by log(n_features))",
     )
+    parser.add_argument(
+        "--early_stopping_epochs",
+        default=1000,
+        type=int,
+        help="Stop early if no improvement for this number of epochs.\
+        In order to have no early stopping, put -1.",
+    )
+    
+    
     parser.add_argument("--batch_size", default=32, type=int)
 
     # learning rate scheme

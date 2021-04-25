@@ -98,7 +98,8 @@ def check_success_sgd(
         if best_loss is None or train_loss < best_loss:
             best_loss = train_loss
             best_loss_e = epoch
-        elif epoch - best_loss_e > 1000:
+        elif (conf.early_stopping_epochs > 0 and 
+              epoch - best_loss_e > conf.early_stopping_epochs):
             return train_losses, train_errors, test_errors
         if (
             train_error < conf.train_threshold
