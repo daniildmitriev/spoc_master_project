@@ -60,6 +60,7 @@ if __name__ == "__main__":
                 "tau": conf.persistence_time,
                 "symmetric_door_k": conf.symmetric_door_channel_K,
                 "project_on_sphere": conf.project_on_sphere,
+                "early_stopping_epochs": conf.early_stopping_epochs,
                 "weightdecay": conf.weight_decay,
                 "epoch": len(train_errors),
                 "train loss": train_losses[-1],
