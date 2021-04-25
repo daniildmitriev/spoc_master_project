@@ -65,10 +65,6 @@ def check_success_sgd(
             cur_loss.backward()
             train_loss += cur_loss.item()
             optimizer.step()
-            if conf.project_on_sphere:
-                weights_norm = torch.linalg.norm(weights, axis=1)
-                weights = torch.div(weights, torch.unsqueeze(weights_norm, 1))
-                weights *= np.sqrt(conf.n_features)
             train_error += error(conf, y_pred, batch_labels).item()
             train_n_batches += 1
             cur_max_gradient = torch.max(torch.abs(weights.grad))
@@ -76,6 +72,12 @@ def check_success_sgd(
                 max_gradient = cur_max_gradient
             # perform exponential averaging of the max gradient value
             max_gradient = 0.9 * max_gradient + 0.1 * cur_max_gradient
+            
+            # projecting on sphere
+            if conf.project_on_sphere:
+                weights_norm = torch.linalg.norm(weights, axis=1)
+                weights = torch.div(weights, torch.unsqueeze(weights_norm, 1))
+                weights *= np.sqrt(conf.n_features)
         # Test
         test_error = 0
         test_n_batches = 0
