@@ -78,7 +78,7 @@ def check_success_sgd(
                 with torch.no_grad():
                     w = weights.data
                     w_norm = torch.linalg.norm(w, axis=1)
-                    w.div_(torch.unsqueeze(w_norm, 1) / np.sqrt(conf.n_features)
+                    w.div_(torch.unsqueeze(w_norm, 1) / np.sqrt(conf.n_features))
         # Test
         test_error = 0
         test_n_batches = 0
