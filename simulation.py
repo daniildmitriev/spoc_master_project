@@ -62,10 +62,7 @@ def check_success_sgd(
             optimizer.zero_grad()
             y_pred = model(batch_data, weights, conf.activation)
             cur_loss = loss(conf, y_pred, batch_labels)
-            if conf.project_on_sphere:
-                cur_loss.backward(retain_graph=True)
-            else:
-                cur_loss.backward()
+            cur_loss.backward()
             train_loss += cur_loss.item()
             optimizer.step()
             train_error += error(conf, y_pred, batch_labels).item()
@@ -78,11 +75,10 @@ def check_success_sgd(
             
                 # projecting on spherel
             if conf.project_on_sphere:
-                weights_norm = torch.linalg.norm(weights, axis=1)
-                weights = torch.div(weights, torch.unsqueeze(weights_norm, 1))
-                weights.retain_grad()
-                weights *= np.sqrt(conf.n_features)
-                weights.retain_grad()
+                with torch.no_grad():
+                    weights_norm = torch.linalg.norm(weights, axis=1)
+                    weights = torch.div(weights, torch.unsqueeze(weights_norm, 1))
+                    weights *= np.sqrt(conf.n_features)
         # Test
         test_error = 0
         test_n_batches = 0
