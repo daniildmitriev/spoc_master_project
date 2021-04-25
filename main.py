@@ -59,6 +59,7 @@ if __name__ == "__main__":
                 "loss_eps": conf.loss_eps,
                 "tau": conf.persistence_time,
                 "symmetric_door_k": conf.symmetric_door_channel_K,
+                "project_on_sphere": conf.project_on_sphere,
                 "weightdecay": conf.weight_decay,
                 "epoch": len(train_errors),
                 "train loss": train_losses[-1],
