@@ -73,11 +73,13 @@ def check_success_sgd(
             # perform exponential averaging of the max gradient value
             max_gradient = 0.9 * max_gradient + 0.1 * cur_max_gradient
             
-            # projecting on sphere
+                # projecting on spherel
             if conf.project_on_sphere:
                 weights_norm = torch.linalg.norm(weights, axis=1)
                 weights = torch.div(weights, torch.unsqueeze(weights_norm, 1))
+                weights.retain_grad()
                 weights *= np.sqrt(conf.n_features)
+                weights.retain_grad()
         # Test
         test_error = 0
         test_n_batches = 0
