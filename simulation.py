@@ -66,7 +66,8 @@ def check_success_sgd(
             train_loss += cur_loss.item()
             optimizer.step()
             if conf.project_on_sphere:
-                weights /= torch.unsqueeze(torch.linalg.norm(weights, axis=1), 1)
+                weights_norm = torch.linalg.norm(weights, axis=1)
+                weights = torch.div(weights, torch.unsqueeze(weights_norm, 1))
                 weights *= np.sqrt(conf.n_features)
             train_error += error(conf, y_pred, batch_labels).item()
             train_n_batches += 1
