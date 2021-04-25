@@ -44,6 +44,13 @@ def get_args():
     parser.add_argument("--n_features", type=int, help="number of features")
     parser.add_argument("--n_hidden", type=int, help="number of hidden units")
     parser.add_argument(
+        "--project_on_sphere", 
+        default=False, 
+        type=str2bool, 
+        help="if True, after each gradient step, project weights on the sphere with R=sqrt(N)"
+    )
+    
+    parser.add_argument(
         "--data_type", 
         type=str, 
         default="quadratic", 

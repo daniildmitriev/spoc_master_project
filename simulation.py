@@ -65,6 +65,9 @@ def check_success_sgd(
             cur_loss.backward()
             train_loss += cur_loss.item()
             optimizer.step()
+            if conf.project_on_sphere:
+                weights /= np.linalg.norm(weights, axis=1)[:, np.newaxis]
+                weights *= np.sqrt(conf.n_features)
             train_error += error(conf, y_pred, batch_labels).item()
             train_n_batches += 1
             cur_max_gradient = torch.max(torch.abs(weights.grad))
