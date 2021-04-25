@@ -62,7 +62,10 @@ def check_success_sgd(
             optimizer.zero_grad()
             y_pred = model(batch_data, weights, conf.activation)
             cur_loss = loss(conf, y_pred, batch_labels)
-            cur_loss.backward()
+            if conf.project_on_sphere:
+                cur_loss.backward(retain_graph=True)
+            else:
+                cur_loss.backward()
             train_loss += cur_loss.item()
             optimizer.step()
             train_error += error(conf, y_pred, batch_labels).item()
