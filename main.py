@@ -18,7 +18,7 @@ if __name__ == "__main__":
         conf.n_train, 
         conf.n_test, 
         conf.n_features,
-        data_type=conf.data_type,
+        data_type=conf.activation,
         K=conf.symmetric_door_channel_K
     )
     if conf.optimizer == "p-sgd":
