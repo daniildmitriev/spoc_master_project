@@ -50,14 +50,6 @@ def get_args():
         help="if True, after each gradient step, project weights on the sphere with R=sqrt(N)"
     )
     
-    
-    parser.add_argument(
-        "--data_type", 
-        type=str, 
-        default="quadratic", 
-        help='"quadratic" for squared labels, "absolute" for absolute values, \
-        "symmetric-door" for symmetric door channel'
-    )
     parser.add_argument(
         "--activation", 
         type=str, 
