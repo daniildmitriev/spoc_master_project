@@ -14,13 +14,7 @@ if __name__ == "__main__":
         assert conf.batch_size == conf.n_train
     np.random.seed(conf.start_seed)
     torch.manual_seed(conf.start_seed)
-    train_data, train_labels, test_data, test_labels = create_dataset(
-        conf.n_train, 
-        conf.n_test, 
-        conf.n_features,
-        data_type=conf.activation,
-        K=conf.symmetric_door_channel_K
-    )
+    train_data, train_labels, test_data, test_labels = create_dataset(conf)
     if conf.optimizer == "p-sgd":
         pois_sampler = PoisSampler(
             train_data.T, conf.batch_size, conf.lr, conf.persistence_time

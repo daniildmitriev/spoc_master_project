@@ -4,7 +4,7 @@ from copy import copy
 from torch.utils.data import TensorDataset
 
 
-def model(data, weights, activation='quadratic'):
+def model(conf, data, weights, train=True):
     """
     let:
     N be the number of samples
@@ -14,31 +14,45 @@ def model(data, weights, activation='quadratic'):
     data: input data, P x N
     weights: M x P
     """
-    if activation == 'quadratic':
-        return torch.mean(torch.matmul(weights, data) ** 2, axis=0)
-    elif activation == 'absolute':
-        return torch.mean(torch.abs(torch.matmul(weights, data)), axis=0)
-    
-    return torch.mean(torch.matmul(weights, data), axis=0)
+    first_layer_output = 0
+    if conf.activation == 'quadratic':
+        first_layer_output = torch.mean(torch.matmul(weights, data) ** 2, axis=0)
+    elif conf.activation == 'absolute':
+        first_layer_output = torch.mean(torch.abs(torch.matmul(weights, data)), axis=0)
+    elif conf.activation == 'relu':
+        first_layer_output = torch.mean(torch.max(torch.matmul(weights, data), 0), axis=0)
+    else:
+        first_layer_output = torch.mean(torch.matmul(weights, data), axis=0)
+
+    if conf.second_layer_activation is None:
+        return first_layer_output
+    elif conf.second_layer_activation == 'quadratic':
+        return first_layer_output ** 2
+    elif conf.second_layer_activation == 'absolute':
+        if train:
+            return torch.sqrt(first_layer_output ** 2 + conf.loss_eps)
+        else:
+            return torch.abs(first_layer_output)
+    elif conf.second_layer_activation == 'symmetric-door':
+        if train:
+            return torch.sqrt(first_layer_output ** 2 + conf.loss_eps) - conf.symmetric_door_channel_K
+        else:
+            return torch.abs(first_layer_output) - conf.symmetric_door_channel_K
+
 
 
 def loss(conf, y_pred, y_true):
     if conf.loss == 'mse':
-        return torch.sum((y_pred - y_true) ** 2)
-    elif conf.loss == 'square':
-        activation_eps = torch.sqrt(y_pred ** 2 + conf.loss_eps) - conf.symmetric_door_channel_K
-        return 0.5 * torch.sum((y_true - activation_eps) ** 2)
+        return 0.5 * torch.sum((y_pred - y_true) ** 2)
     elif conf.loss == 'logloss':
-        activation_eps = torch.sqrt(y_pred ** 2 + conf.loss_eps) - conf.symmetric_door_channel_K
-        return torch.sum(torch.log(1 + torch.exp(-y_true * activation_eps)))
-    
+        return torch.sum(torch.log(1 + torch.exp(-y_true * y_pred)))
+
 
 
 def error(conf, y_pred, y_true):
-    if conf.loss == 'mse':
-        return torch.mean((y_pred - y_true) ** 2)
-    activation_eps = torch.abs(y_pred) - conf.symmetric_door_channel_K
-    return 0.5 * torch.mean((torch.sign(activation_eps) - y_true)**2)
+    if conf.data_type == 'symmetric-door':
+        return 0.5 * torch.mean((torch.sign(y_pred) - y_true)**2)
+    return 0.5 * torch.mean((y_pred - y_true) ** 2)
 
 
 def check_success_sgd(

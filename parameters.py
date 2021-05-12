@@ -55,7 +55,15 @@ def get_args():
         type=str, 
         default="quadratic", 
         help='"quadratic" to square outputs after first layer, "absolute" to use absolute values, \
-        otherwise using no activation'
+        "relu" for ReLU activation, otherwise using no activation'
+    )
+
+    parser.add_argument(
+        "--second_layer_activation", 
+        type=str, 
+        default=None, 
+        help='"quadratic" to square outputs after first layer, "absolute" to use absolute values, \
+        "symmetric-door" for symmetric door activation function, otherwise using no activation'
     )
     parser.add_argument("--symmetric_door_channel_K", 
                         type=float, 
@@ -73,6 +81,14 @@ def get_args():
         type=float,
         default=1e-8,
         help='small value used for smoothing loss functions')
+    parser.add_argument(
+        "--data_type", 
+        type=str, 
+        default="quadratic", 
+        help='"quadratic" to square the labels, "absolute" to take absolute value, \
+        "symmetric-door" to apply symmetric door function'
+    )
+    
 
     parser.add_argument(
         "--n_epochs",
