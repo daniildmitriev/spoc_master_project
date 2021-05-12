@@ -50,16 +50,21 @@ if __name__ == "__main__":
         conf.logger.save_csv(
             {
                 "seed": seed,
+                "start_seed": conf.start_seed,
+                "activation": conf.activation,
+                "second_layer_activation": conf.second_layer_activation,
                 "loss_eps": conf.loss_eps,
                 "tau": conf.persistence_time,
                 "symmetric_door_k": conf.symmetric_door_channel_K,
                 "project_on_sphere": conf.project_on_sphere,
                 "early_stopping_epochs": conf.early_stopping_epochs,
-                "weightdecay": conf.weight_decay,
+                "weight_decay": conf.weight_decay,
+                "batch_size": conf.batch_size,
                 "epoch": len(train_errors),
-                "train loss": train_losses[-1],
-                "train error": train_errors[-1],
-                "test error": test_errors[-1],
+                "train_loss": train_losses[-1],
+                "train_error": train_errors[-1],
+                "test_error": test_errors[-1],
+                "n_test": conf.n_test,
             }
         )
         conf.logger.info(f"Run #{seed - conf.start_seed} completed")

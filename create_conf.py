@@ -12,14 +12,12 @@ def is_zero_file(fpath):
 def get_checkpoint_folder_name(conf):
     # concat them together.
     directory = f"{conf.root_dir}/{time.time():.0f}_optim_{conf.optimizer}_"
-    directory += f"activation_{conf.activation}_loss_{conf.loss}_"
+    directory += f"datatype_{conf.data_type}_loss_{conf.loss}_"
     directory += f"samplecomplexity_{conf.sample_complexity}_"
     directory += f"nfeatures_{conf.n_features}_nhidden_{conf.n_hidden}_"
-    directory += f"batchsize_{conf.batch_size}_lr_{conf.lr}_"
+    directory += f"lr_{conf.lr}_"
     directory += f"momentum_{conf.momentum_factor}_nesterov_{conf.use_nesterov}_"
     directory += f"nepochs_{conf.n_epochs}_"
-    directory += f"ntest_{conf.n_test}_startseed_{conf.start_seed}_"
-    directory += f"nruns_{conf.n_runs}"
     return directory
 
 
