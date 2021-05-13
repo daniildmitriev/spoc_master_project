@@ -44,7 +44,7 @@ def model(conf, data, weights, train=True):
                 activation = torch.sqrt(activation ** 2 + conf.loss_eps)
             else:
                 activation = torch.abs(activation)
-        return 2 / (1 + torch.exp(-activation + conf.symmetric_door_channel_K)) - 1
+        return 2 / (1 + torch.exp(-activation)) - 1
 
 
 def loss(conf, y_pred, y_true):
