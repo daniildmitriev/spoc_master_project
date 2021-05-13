@@ -17,7 +17,10 @@ def create_dataset(conf):
     test_labels
     """
     if conf.labels == "symmetric-door":
-        teacher_weights = 2 * torch.randint(low=0, high=2, size=(conf.n_features,)) 
+        teacher_weights = 2 * torch.randint(low=0, 
+                                            high=2, 
+                                            size=(conf.n_features,), 
+                                            dtype=torch.float) - 1
     else:
         teacher_weights = torch.randn(conf.n_features)
     train_data = torch.normal(
