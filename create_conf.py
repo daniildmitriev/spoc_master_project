@@ -120,6 +120,18 @@ def create_conf(conf):
                                              "absolute", 
                                              "symmetric-door", 
                                              "symmetric-door-absolute"])
+    conf.logger.info(f"start_seed: {conf.start_seed} \n \
+                       activation: {conf.activation} \n \
+                       second_layer_activation: {conf.second_layer_activation} \n \
+                       loss_eps: {conf.loss_eps} \n \
+                       tau: {conf.persistence_time} \n \
+                       symmetric_door_k: {conf.symmetric_door_channel_K} \n \
+                       project_on_sphere: {conf.project_on_sphere} \n \
+                       early_stopping_epochs: {conf.early_stopping_epochs} \n \
+                       weight_decay: {conf.weight_decay} \n \
+                       batch_size: {conf.batch_size} \n \
+                       n_epochs: {conf.n_epochs} \n \
+                       n_test: {conf.n_test}")
     conf.directory = get_checkpoint_folder_name(conf)
     build_dirs(conf.directory)
     conf.logger = Logger(conf.directory)
@@ -131,5 +143,5 @@ def create_conf(conf):
         assert lr_over_tau <= 1.0
         assert lr_over_tau * (1 - conf.batch_size) / conf.batch_size  <= 1.0
 
-    conf.logger.info(f"Loss function: {conf.loss}, with epsilong: {conf.loss_eps}")
+    conf.logger.info(f"Loss function: {conf.loss}, with epsilon: {conf.loss_eps}")
     return conf
