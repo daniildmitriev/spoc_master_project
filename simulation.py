@@ -22,7 +22,7 @@ def model(conf, data, weights, train=True):
     elif conf.activation == 'absolute':
         first_layer_output = torch.mean(torch.abs(torch.matmul(weights, data)), axis=0)
     elif conf.activation == 'relu':
-        first_layer_output = torch.mean(torch.max(torch.matmul(weights, data), 0), axis=0)
+        first_layer_output = torch.mean(torch.maximum(torch.matmul(weights, data), 0), axis=0)
     elif conf.activation == 'linear':
         first_layer_output = torch.mean(torch.matmul(weights, data), axis=0)
     else:
