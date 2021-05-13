@@ -16,24 +16,23 @@ def model(conf, data, weights, train=True):
     """
     
     # first layer
-    first_layer_output = 0
+    first_layer_output = torch.matmul(weights, data)
     if conf.activation == 'quadratic':
-        first_layer_output = torch.mean(torch.matmul(weights, data) ** 2, axis=0)
+        first_layer_output = first_layer_output ** 2
     elif conf.activation == 'absolute':
-        first_layer_output = torch.mean(torch.abs(torch.matmul(weights, data)), axis=0)
+        first_layer_output = torch.abs(first_layer_output)
     elif conf.activation == 'relu':
-        first_layer_output = torch.mean(torch.maximum(torch.matmul(weights, data), 0), axis=0)
-    elif conf.activation == 'linear':
-        first_layer_output = torch.mean(torch.matmul(weights, data), axis=0)
-    else:
-        raise ValueError('Activation function is not specified')
+        first_layer_output = torch.maximum(first_layer_output, 
+                                           torch.zeros_like(first_layer_output))
+    first_layer_output = torch.mean(first_layer_output, axis=0)
+   
 
     # second layer
     if conf.second_layer_activation is None or conf.second_layer_activation == 'none':
         return first_layer_output
-    elif conf.second_layer_activation == 'quadratic':
+    elif conf.second_layer_activation == 'quadratic': # not sure if needed
         return first_layer_output ** 2
-    elif conf.second_layer_activation == 'absolute':
+    elif conf.second_layer_activation == 'absolute': # not sure if needed
         if train:
             return torch.sqrt(first_layer_output ** 2 + conf.loss_eps)
         else:
