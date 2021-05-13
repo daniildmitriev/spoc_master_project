@@ -24,13 +24,13 @@ def create_dataset(conf):
                              size=(conf.n_features, conf.n_test))
     train_mult = teacher_weights.matmul(train_data)
     test_mult = teacher_weights.matmul(test_data)
-    if conf.data_type == "quadratic":
+    if conf.labels == "quadratic":
         train_labels = train_mult ** 2
         test_labels = test_mult ** 2
-    elif conf.data_type == "absolute":
+    elif conf.labels == "absolute":
         train_labels = torch.abs(train_mult)
         test_labels = torch.abs(test_mult)
-    elif conf.data_type == "symmetric-door":
+    elif conf.labels == "symmetric-door":
         train_labels = torch.sign(torch.abs(train_mult) - conf.symmetric_door_channel_K)
         test_labels = torch.sign(torch.abs(test_mult) - conf.symmetric_door_channel_K)
     return train_data, train_labels, test_data, test_labels

@@ -82,7 +82,7 @@ def get_args():
         default=1e-8,
         help='small value used for smoothing loss functions')
     parser.add_argument(
-        "--data_type", 
+        "--labels", 
         type=str, 
         default="quadratic", 
         help='"quadratic" to square the labels, "absolute" to take absolute value, \

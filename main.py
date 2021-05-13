@@ -61,6 +61,7 @@ if __name__ == "__main__":
                 "weight_decay": conf.weight_decay,
                 "batch_size": conf.batch_size,
                 "epoch": len(train_errors),
+                "n_epochs": conf.n_epochs,
                 "train_loss": train_losses[-1],
                 "train_error": train_errors[-1],
                 "test_error": test_errors[-1],

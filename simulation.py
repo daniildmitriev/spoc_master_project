@@ -74,7 +74,7 @@ def check_success_sgd(
             batch_data = batch_data.T
             batch_labels = batch_labels.T
             optimizer.zero_grad()
-            y_pred = model(batch_data, weights, conf.activation)
+            y_pred = model(batch_data, weights, conf.activation, train=True)
             cur_loss = loss(conf, y_pred, batch_labels)
             cur_loss.backward()
             train_loss += cur_loss.item()
@@ -99,7 +99,7 @@ def check_success_sgd(
         for batch_data, batch_labels in test_loader:
             batch_data = batch_data.T
             batch_labels = batch_labels.T
-            y_pred = model(batch_data, weights, conf.activation)
+            y_pred = model(batch_data, weights, conf.activation, train=False)
             test_error += error(conf, y_pred, batch_labels).item()
             test_n_batches += 1
         test_error /= test_n_batches
