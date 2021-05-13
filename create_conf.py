@@ -120,6 +120,10 @@ def create_conf(conf):
                                              "absolute", 
                                              "symmetric-door", 
                                              "symmetric-door-absolute"])
+
+    conf.directory = get_checkpoint_folder_name(conf)
+    build_dirs(conf.directory)
+    conf.logger = Logger(conf.directory)
     conf.logger.info(f"start_seed: {conf.start_seed} \n \
                        activation: {conf.activation} \n \
                        second_layer_activation: {conf.second_layer_activation} \n \
@@ -132,9 +136,6 @@ def create_conf(conf):
                        batch_size: {conf.batch_size} \n \
                        n_epochs: {conf.n_epochs} \n \
                        n_test: {conf.n_test}")
-    conf.directory = get_checkpoint_folder_name(conf)
-    build_dirs(conf.directory)
-    conf.logger = Logger(conf.directory)
     if conf.optimizer == "p-sgd":
         lr_over_tau = conf.lr / conf.persistence_time
         conf.logger.info("Persistent SGD switch probabilities:")
