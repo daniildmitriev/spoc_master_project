@@ -113,7 +113,13 @@ def create_conf(conf):
         conf.batch_size = conf.n_train
     if (conf.optimizer in ["p-sgd", "sgd"]) and conf.psgd_adaptive_bs:
         conf.batch_size = int(conf.batch_size * conf.sample_complexity)
-
+    assert conf.activation in ["quadratic", "absolute", "relu", "linear"]
+    assert (conf.second_layer_activation is None or 
+            conf.second_layer_activation in ["none",
+                                             "quadratic", 
+                                             "absolute", 
+                                             "symmetric-door", 
+                                             "symmetric-door-absolute"])
     conf.directory = get_checkpoint_folder_name(conf)
     build_dirs(conf.directory)
     conf.logger = Logger(conf.directory)

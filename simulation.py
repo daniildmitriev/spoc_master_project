@@ -14,6 +14,8 @@ def model(conf, data, weights, train=True):
     data: input data, P x N
     weights: M x P
     """
+    
+    # first layer
     first_layer_output = 0
     if conf.activation == 'quadratic':
         first_layer_output = torch.mean(torch.matmul(weights, data) ** 2, axis=0)
@@ -21,10 +23,13 @@ def model(conf, data, weights, train=True):
         first_layer_output = torch.mean(torch.abs(torch.matmul(weights, data)), axis=0)
     elif conf.activation == 'relu':
         first_layer_output = torch.mean(torch.max(torch.matmul(weights, data), 0), axis=0)
-    else:
+    elif conf.activation == 'linear':
         first_layer_output = torch.mean(torch.matmul(weights, data), axis=0)
+    else:
+        raise ValueError('Activation function is not specified')
 
-    if conf.second_layer_activation is None:
+    # second layer
+    if conf.second_layer_activation is None or conf.second_layer_activation == 'none':
         return first_layer_output
     elif conf.second_layer_activation == 'quadratic':
         return first_layer_output ** 2
@@ -33,12 +38,14 @@ def model(conf, data, weights, train=True):
             return torch.sqrt(first_layer_output ** 2 + conf.loss_eps)
         else:
             return torch.abs(first_layer_output)
-    elif conf.second_layer_activation == 'symmetric-door':
-        if train:
-            return torch.sqrt(first_layer_output ** 2 + conf.loss_eps) - conf.symmetric_door_channel_K
-        else:
-            return torch.abs(first_layer_output) - conf.symmetric_door_channel_K
-
+    elif conf.second_layer_activation[:14] == 'symmetric-door':
+        activation = first_layer_output
+        if conf.second_layer_activation[-8:] == 'absolute':
+            if train:
+                activation = torch.sqrt(activation ** 2 + conf.loss_eps)
+            else:
+                activation = torch.abs(activation)
+        return 2 / (torch.exp(activation - conf.symmetric_door_channel_K)) - 1
 
 
 def loss(conf, y_pred, y_true):
@@ -50,7 +57,7 @@ def loss(conf, y_pred, y_true):
 
 
 def error(conf, y_pred, y_true):
-    if conf.data_type == 'symmetric-door':
+    if conf.labels == 'symmetric-door':
         return 0.5 * torch.mean((torch.sign(y_pred) - y_true)**2)
     return 0.5 * torch.mean((y_pred - y_true) ** 2)
 
@@ -74,7 +81,7 @@ def check_success_sgd(
             batch_data = batch_data.T
             batch_labels = batch_labels.T
             optimizer.zero_grad()
-            y_pred = model(batch_data, weights, conf.activation, train=True)
+            y_pred = model(conf, batch_data, weights, train=True)
             cur_loss = loss(conf, y_pred, batch_labels)
             cur_loss.backward()
             train_loss += cur_loss.item()
@@ -99,7 +106,7 @@ def check_success_sgd(
         for batch_data, batch_labels in test_loader:
             batch_data = batch_data.T
             batch_labels = batch_labels.T
-            y_pred = model(batch_data, weights, conf.activation, train=False)
+            y_pred = model(conf, batch_data, weights, train=False)
             test_error += error(conf, y_pred, batch_labels).item()
             test_n_batches += 1
         test_error /= test_n_batches

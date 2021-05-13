@@ -63,7 +63,8 @@ def get_args():
         type=str, 
         default=None, 
         help='"quadratic" to square outputs after first layer, "absolute" to use absolute values, \
-        "symmetric-door" for symmetric door activation function, otherwise using no activation'
+        "symmetric-door" for apply sign(x - K), \
+        "symmetric-door-absolute" to apply sign(|x| - K), otherwise using no activation'
     )
     parser.add_argument("--symmetric_door_channel_K", 
                         type=float, 
@@ -74,7 +75,6 @@ def get_args():
         type=str,
         default="mse",
         help='"mse" for standard quadratic loss, \
-              "square" same for symmetric door channels preactivations \
               "logloss" for log loss.')
     parser.add_argument(
         "--loss_eps",
@@ -122,7 +122,7 @@ def get_args():
         "--optimizer", 
         type=str, 
         default="sgd", 
-        help='"adam" for Adam, "sgd" for SGD, "p-sgd" for Persistent-SGD'
+        help='"adam" for Adam, "gd" for GD, "sgd" for SGD, "p-sgd" for Persistent-SGD'
     )
 
     parser.add_argument(
