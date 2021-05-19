@@ -20,11 +20,14 @@ def model(conf, data, weights, train=True):
     if conf.activation == 'quadratic':
         first_layer_output = first_layer_output ** 2
     elif conf.activation == 'absolute':
-        first_layer_output = torch.abs(first_layer_output)
+        if train:
+            first_layer_output = torch.sqrt(first_layer_output ** 2 + conf.loss_eps)
+        else:
+            first_layer_output = torch.abs(first_layer_output)
     elif conf.activation == 'relu':
         first_layer_output = torch.maximum(first_layer_output, 
                                            torch.zeros_like(first_layer_output))
-    first_layer_output = torch.mean(first_layer_output, axis=0)
+    first_layer_output = torch.mean(first_layer_output, axis=0) # + bias <- to learn
    
 
     # second layer
@@ -39,12 +42,14 @@ def model(conf, data, weights, train=True):
             return torch.abs(first_layer_output)
     elif conf.second_layer_activation[:14] == 'symmetric-door':
         activation = first_layer_output
-        if conf.second_layer_activation[-8:] == 'absolute':
-            if train:
-                activation = torch.sqrt(activation ** 2 + conf.loss_eps)
-            else:
-                activation = torch.abs(activation)
-        return 2 / (1 + torch.exp(-activation + conf.symmetric_door_channel_K)) - 1
+        return activation - conf.symmetric_door_channel_K
+#         if conf.second_layer_activation[-8:] == 'absolute':
+#             if train:
+#                 activation = torch.sqrt(activation ** 2 + conf.loss_eps)
+#             else:
+#                 activation = torch.abs(activation)
+#         # ask if K is known!
+#         return 2 / (1 + torch.exp(-activation + conf.symmetric_door_channel_K)) - 1
 
 
 def loss(conf, y_pred, y_true):
