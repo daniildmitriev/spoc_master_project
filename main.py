@@ -26,7 +26,8 @@ if __name__ == "__main__":
         train_loader = DataLoader(
             TensorDataset(train_data.T, train_labels.T), 
             batch_size=conf.batch_size,
-            shuffle=True
+            shuffle=True,
+            drop_last=True # to avoid rounding errors
         )
     test_loader = DataLoader(
         TensorDataset(test_data.T, test_labels.T), batch_size=conf.n_test
