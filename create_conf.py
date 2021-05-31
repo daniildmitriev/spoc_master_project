@@ -143,6 +143,6 @@ def create_conf(conf):
         conf.logger.info(f"from 1 to 0: {(conf.n_train - conf.batch_size) / conf.batch_size * lr_over_tau}")
         assert lr_over_tau <= 1.0
         assert lr_over_tau * (1 - conf.batch_size) / conf.batch_size  <= 1.0
-
+    conf.logger.info(f"Number of samples: {conf.n_train}, batch size: {conf.batch_size}")
     conf.logger.info(f"Loss function: {conf.loss}, with epsilon: {conf.loss_eps}")
     return conf
