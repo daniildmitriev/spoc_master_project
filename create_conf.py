@@ -87,7 +87,7 @@ class Logger:
         utils.write_txt(value + "\n", self.file_txt, type="a")
 
     def save_tensor(self, file, value):
-        torch.save(value, os.path.join(file_folder, file))
+        torch.save(value, os.path.join(self.file_folder, file))
 
     def save_csv(self, to_report):
         files = open(self.file_csv, "a")
