@@ -8,6 +8,9 @@ def get_args():
     )
 
     parser.add_argument("--start_seed", type=int, default=5, help="random seed")
+    parser.add_argument("--seed_offset", type=int, default=0,
+                        help="from which seed to start training \
+                        (useful when runs were finished before completion")
     parser.add_argument("--n_runs", type=int, default=20, help="number of simulations")
     parser.add_argument(
         "--train_threshold",
@@ -129,6 +132,10 @@ def get_args():
         "--verbose_freq", type=int, default=100, help="How often print logs"
     )
     
+    parser.add_argument(
+        "--compute_hessian", type=str2bool, default=False, help="Compute hessian at the end"
+    )
+
     # persistent SGD param
     parser.add_argument(
         "--persistence_time", default=1.0, type=float, help="persistence time"

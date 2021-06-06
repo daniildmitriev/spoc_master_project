@@ -3,6 +3,7 @@ import time
 import logging
 import os
 import json
+import numpy as np
 
 
 def is_zero_file(fpath):
@@ -84,6 +85,9 @@ class Logger:
 
     def save_txt(self, value):
         utils.write_txt(value + "\n", self.file_txt, type="a")
+
+    def save_tensor(self, file, value):
+        torch.save(value, os.path.join(file_folder, file))
 
     def save_csv(self, to_report):
         files = open(self.file_csv, "a")

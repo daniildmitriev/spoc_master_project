@@ -2,7 +2,7 @@ import numpy as np
 import torch
 from copy import copy
 from torch.utils.data import TensorDataset
-
+from torch.autograd.functional import hessian
 
 def model(conf, data, weights, train=True):
     """
@@ -58,7 +58,10 @@ def loss(conf, y_pred, y_true):
     elif conf.loss == 'logloss':
         return torch.sum(torch.log(1 + torch.exp(-y_true * y_pred)))
 
-
+def hessian_loss(conf, y_true, batch_data):
+    lambda weights: loss(conf,
+                         model(conf, batch_data, weights, train=True),
+                         y_true)
 
 def error(conf, y_pred, y_true):
     if conf.labels == 'symmetric-door':
@@ -135,5 +138,12 @@ def check_success_sgd(
             or test_error < conf.test_threshold
             or max_gradient < conf.gradient_threshold
         ):
-            return train_losses, train_errors, test_errors
+            break
+    if conf.compute_hessian == True:
+        for batch_data, batch_labels in train_loader:
+            batch_data = batch_data.T
+            batch_labels = batch_labels.T
+            hessian_matrix = hessian(hessian_loss(conf, batch_data, batch_labels), weights)
+            conf.logger.save_tensor(hessian_matrix, 'hessian.pt')
+            break
     return train_losses, train_errors, test_errors

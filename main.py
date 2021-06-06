@@ -33,7 +33,7 @@ if __name__ == "__main__":
         TensorDataset(test_data.T, test_labels.T), batch_size=conf.n_test
     )
 
-    for seed in range(conf.start_seed + 1, conf.start_seed + conf.n_runs + 1):
+    for seed in range(conf.start_seed + conf.seed_offset + 1, conf.start_seed + conf.n_runs + 1):
         np.random.seed(seed)
         torch.manual_seed(seed)
         weights = torch.randn(conf.n_hidden, conf.n_features, requires_grad=True)
