@@ -143,7 +143,7 @@ def check_success_sgd(
         for batch_data, batch_labels in train_loader:
             batch_data = batch_data.T
             batch_labels = batch_labels.T
-            hessian_matrix = hessian(hessian_loss(conf, batch_data, batch_labels), weights)
+            hessian_matrix = hessian(hessian_loss(conf, batch_labels, batch_data), weights)
             conf.logger.save_tensor(hessian_matrix, 'hessian.pt')
             break
     return train_losses, train_errors, test_errors
