@@ -59,9 +59,9 @@ def loss(conf, y_pred, y_true):
         return torch.sum(torch.log(1 + torch.exp(-y_true * y_pred)))
 
 def hessian_loss(conf, y_true, batch_data):
-    lambda weights: loss(conf,
-                         model(conf, batch_data, weights, train=True),
-                         y_true)
+    return lambda weights: loss(conf,
+                           model(conf, batch_data, weights, train=True),
+                           y_true)
 
 def error(conf, y_pred, y_true):
     if conf.labels == 'symmetric-door':
