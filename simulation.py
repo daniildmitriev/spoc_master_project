@@ -58,16 +58,24 @@ def loss(conf, y_pred, y_true):
     elif conf.loss == 'logloss':
         return torch.sum(torch.log(1 + torch.exp(-y_true * y_pred)))
 
-def hessian_loss(conf, y_true, batch_data):
-    return lambda weights: loss(conf,
-                           model(conf, batch_data, weights, train=True),
-                           y_true)
-
 def error(conf, y_pred, y_true):
     if conf.labels == 'symmetric-door':
         return 0.5 * torch.mean((torch.sign(y_pred) - y_true)**2)
     return 0.5 * torch.mean((y_pred - y_true) ** 2)
 
+def compute_hessian(conf, model, weights, data_loader):
+    """
+    Computes Hessian of the loss at the given point.
+    """
+    
+    # using for-loop, but only need first iteration
+    for batch_data, batch_labels in data_loader:
+        batch_data = batch_data.T
+        batch_labels = batch_labels.T
+        loss_func = lambda weights: loss(conf, 
+                                         model(conf, batch_data, weights, train=True), 
+                                         batch_labels)
+        return hessian(loss_func(conf, batch_labels.T, batch_data.T), weights)
 
 def check_success_sgd(
     conf, train_loader, test_loader, optimizer, weights, verbose=False
@@ -132,18 +140,17 @@ def check_success_sgd(
             best_loss_e = epoch
         elif (conf.early_stopping_epochs > 0 and 
               epoch - best_loss_e > conf.early_stopping_epochs):
-            return train_losses, train_errors, test_errors
+            break
         if (
             train_error < conf.train_threshold
             or test_error < conf.test_threshold
             or max_gradient < conf.gradient_threshold
         ):
             break
-    if conf.compute_hessian == True:
-        for batch_data, batch_labels in train_loader:
-            batch_data = batch_data.T
-            batch_labels = batch_labels.T
-            hessian_matrix = hessian(hessian_loss(conf, batch_labels, batch_data), weights)
-            conf.logger.save_tensor(hessian_matrix, 'hessian.pt')
-            break
+        if conf.compute_hessian and (epoch % conf.compute_hessian_freq == 0):
+            hessian_matrix = compute_hessian(conf, model, weights, train_loader)
+            conf.logger.save_tensor(hessian_matrix, f"hessian_{epoch}e.pt")
+    if conf.compute_hessian:
+        hessian_matrix = compute_hessian(conf, model, weights, train_loader)
+        conf.logger.save_tensor(hessian_matrix, f"hessian_{epoch}e.pt")
     return train_losses, train_errors, test_errors

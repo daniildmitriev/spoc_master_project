@@ -136,6 +136,11 @@ def get_args():
         "--compute_hessian", type=str2bool, default=False, help="Compute hessian at the end"
     )
 
+    parser.add_argument(
+        "--compute_hessian_freq", type=int, default=1000, help="How often compute hessian"
+    )
+    
+
     # persistent SGD param
     parser.add_argument(
         "--persistence_time", default=1.0, type=float, help="persistence time"
