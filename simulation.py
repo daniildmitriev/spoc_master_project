@@ -151,11 +151,11 @@ def check_success_sgd(
             hessian_matrix_train = compute_hessian(conf, model, weights, train_loader)
             conf.logger.save_tensor(hessian_matrix_train, f"hessian_train_seed_{conf.cur_seed}", epoch)
             hessian_matrix_test = compute_hessian(conf, model, weights, test_loader)
-            conf.logger.save_tensor(hessian_matrix_train, f"hessian_test_seed_{conf.cur_seed}", epoch)
+            conf.logger.save_tensor(hessian_matrix_test, f"hessian_test_seed_{conf.cur_seed}", epoch)
     if conf.compute_hessian:
         hessian_matrix_train = compute_hessian(conf, model, weights, train_loader)
         conf.logger.save_tensor(hessian_matrix_train, f"hessian_train_seed_{conf.cur_seed}", epoch)
         hessian_matrix_test = compute_hessian(conf, model, weights, test_loader)
-        conf.logger.save_tensor(hessian_matrix_train, f"hessian_test_seed_{conf.cur_seed}", epoch)
+        conf.logger.save_tensor(hessian_matrix_test, f"hessian_test_seed_{conf.cur_seed}", epoch)
         conf.logger.save_tensor(weights, f"weights_seed_{conf.cur_seed}", epoch)
     return train_losses, train_errors, test_errors
