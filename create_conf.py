@@ -3,6 +3,7 @@ import time
 import logging
 import os
 import json
+import pickle
 import numpy as np
 
 
@@ -90,6 +91,9 @@ class Logger:
         torch.save(value, 
                    os.path.join(self.file_folder, 
                                 f"{file}_{epoch}e.pt"))
+
+    def save_pickle(self, value, file):
+        pickle.dump(value, open(os.path.join(self.file_folder, f"{file}.pkl"), "wb"))
 
     def save_csv(self, to_report):
         files = open(self.file_csv, "a")

@@ -140,6 +140,10 @@ def get_args():
         "--compute_hessian_freq", type=int, default=1000, help="How often compute hessian"
     )
     
+    parser.add_argument(
+        "--save_eigenvalues", type=str2bool, default=True, help="Only save eigenvalues"
+    )
+
 
     # persistent SGD param
     parser.add_argument(

@@ -86,6 +86,8 @@ def check_success_sgd(
     max_gradient = None
     best_loss = None
     best_loss_e = None
+    if conf.compute_hessian and conf.save_eigenvalues:
+        eigenvalues = {}
     for epoch in range(int(conf.n_epochs * np.log2(conf.n_features + 1))):
         train_error = 0
         train_loss = 0
@@ -149,13 +151,32 @@ def check_success_sgd(
             break
         if conf.compute_hessian and (epoch % conf.compute_hessian_freq == 0):
             hessian_matrix_train = compute_hessian(conf, model, weights, train_loader)
-            conf.logger.save_tensor(hessian_matrix_train, f"hessian_train_seed_{conf.cur_seed}", epoch)
             hessian_matrix_test = compute_hessian(conf, model, weights, test_loader)
-            conf.logger.save_tensor(hessian_matrix_test, f"hessian_test_seed_{conf.cur_seed}", epoch)
+            if conf.save_eigenvalues:
+                n_params = conf.n_features * conf.n_hidden
+                hessian_matrix_train = hessian_matrix_train.reshape((n_params, n_params))
+                hessian_matrix_test = hessian_matrix_test.reshape((n_params, n_params))
+                eigvals_train = np.linalg.eigh(hessian_matrix_train)[0]
+                eigvals_test = np.linalg.eigh(hessian_matrix_test)[0]
+                eigenvalues[('train', epoch)] = eigvals_train
+                eigenvalues[('test', epoch)] = eigvals_test
+            else:
+                conf.logger.save_tensor(hessian_matrix_train, f"hessian_train_seed_{conf.cur_seed}", epoch)
+                conf.logger.save_tensor(hessian_matrix_test, f"hessian_test_seed_{conf.cur_seed}", epoch)
     if conf.compute_hessian:
         hessian_matrix_train = compute_hessian(conf, model, weights, train_loader)
-        conf.logger.save_tensor(hessian_matrix_train, f"hessian_train_seed_{conf.cur_seed}", epoch)
         hessian_matrix_test = compute_hessian(conf, model, weights, test_loader)
-        conf.logger.save_tensor(hessian_matrix_test, f"hessian_test_seed_{conf.cur_seed}", epoch)
+        if conf.save_eigenvalues:
+            n_params = conf.n_features * conf.n_hidden
+            hessian_matrix_train = hessian_matrix_train.reshape((n_params, n_params))
+            hessian_matrix_test = hessian_matrix_test.reshape((n_params, n_params))
+            eigvals_train = np.linalg.eigh(hessian_matrix_train)[0]
+            eigvals_test = np.linalg.eigh(hessian_matrix_test)[0]
+            eigenvalues[('train', epoch)] = eigvals_train
+            eigenvalues[('test', epoch)] = eigvals_test
+            conf.logger.save_pickle(eigenvalues, f"eigenvalues_seed_{conf.cur_seed}")
+        else:
+            conf.logger.save_tensor(hessian_matrix_train, f"hessian_train_seed_{conf.cur_seed}", epoch)
+            conf.logger.save_tensor(hessian_matrix_test, f"hessian_test_seed_{conf.cur_seed}", epoch)
         conf.logger.save_tensor(weights, f"weights_seed_{conf.cur_seed}", epoch)
     return train_losses, train_errors, test_errors
