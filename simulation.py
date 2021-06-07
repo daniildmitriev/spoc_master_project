@@ -148,9 +148,13 @@ def check_success_sgd(
         ):
             break
         if conf.compute_hessian and (epoch % conf.compute_hessian_freq == 0):
-            hessian_matrix = compute_hessian(conf, model, weights, train_loader)
-            conf.logger.save_tensor(hessian_matrix, f"hessian_{epoch}e.pt")
+            hessian_matrix_train = compute_hessian(conf, model, weights, train_loader)
+            conf.logger.save_tensor(hessian_matrix_train, f"hessian_train_seed_{conf.cur_seed}", epoch)
+            hessian_matrix_test = compute_hessian(conf, model, weights, test_loader)
+            conf.logger.save_tensor(hessian_matrix_train, f"hessian_test_seed_{conf.cur_seed}", epoch)
     if conf.compute_hessian:
-        hessian_matrix = compute_hessian(conf, model, weights, train_loader)
-        conf.logger.save_tensor(hessian_matrix, f"hessian_{epoch}e.pt")
+        hessian_matrix_train = compute_hessian(conf, model, weights, train_loader)
+        conf.logger.save_tensor(hessian_matrix_train, f"hessian_train_seed_{conf.cur_seed}", epoch)
+        hessian_matrix_test = compute_hessian(conf, model, weights, test_loader)
+        conf.logger.save_tensor(hessian_matrix_train, f"hessian_test_seed_{conf.cur_seed}", epoch)
     return train_losses, train_errors, test_errors
