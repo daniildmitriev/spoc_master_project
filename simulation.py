@@ -75,7 +75,7 @@ def compute_hessian(conf, model, weights, data_loader):
         loss_func = lambda weights: loss(conf, 
                                          model(conf, batch_data, weights, train=True), 
                                          batch_labels)
-        return hessian(loss_func(conf, batch_labels.T, batch_data.T), weights)
+        return hessian(loss_func, weights)
 
 def check_success_sgd(
     conf, train_loader, test_loader, optimizer, weights, verbose=False
