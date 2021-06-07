@@ -157,4 +157,5 @@ def check_success_sgd(
         conf.logger.save_tensor(hessian_matrix_train, f"hessian_train_seed_{conf.cur_seed}", epoch)
         hessian_matrix_test = compute_hessian(conf, model, weights, test_loader)
         conf.logger.save_tensor(hessian_matrix_train, f"hessian_test_seed_{conf.cur_seed}", epoch)
+        conf.logger.save_tensor(weights, f"weights_seed_{conf.cur_seed}", epoch)
     return train_losses, train_errors, test_errors
