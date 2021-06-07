@@ -34,6 +34,7 @@ if __name__ == "__main__":
     )
 
     for seed in range(conf.start_seed + conf.seed_offset + 1, conf.start_seed + conf.n_runs + 1):
+        conf.cur_seed = seed
         np.random.seed(seed)
         torch.manual_seed(seed)
         weights = torch.randn(conf.n_hidden, conf.n_features, requires_grad=True)
