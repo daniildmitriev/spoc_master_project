@@ -14,29 +14,25 @@ if __name__ == "__main__":
         assert conf.batch_size == conf.n_train
     np.random.seed(conf.start_seed)
     torch.manual_seed(conf.start_seed)
-    train_data, train_labels, test_data, test_labels = create_dataset(conf)
-    if conf.optimizer == "p-sgd":
-        pois_sampler = PoisSampler(
-            train_data.T, conf.batch_size, conf.lr, conf.persistence_time
-        )
-        train_loader = DataLoader(
-            TensorDataset(train_data.T, train_labels.T), batch_sampler=pois_sampler
-        )
+
+    if conf.fix_teacher_change_data:
+        if conf.labels == "symmetric-door":
+            teacher_weights = 2 * torch.randint(low=0, 
+                                                high=2, 
+                                                size=(conf.n_features,), 
+                                                dtype=torch.float) - 1
+        else:
+            teacher_weights = torch.randn(conf.n_features)
     else:
-        train_loader = DataLoader(
-            TensorDataset(train_data.T, train_labels.T), 
-            batch_size=conf.batch_size,
-            shuffle=True,
-            drop_last=True # to avoid rounding errors
-        )
-    test_loader = DataLoader(
-        TensorDataset(test_data.T, test_labels.T), batch_size=conf.n_test
-    )
+        train_loader, test_loader = create_dataloaders(conf)
+    
 
     for seed in range(conf.start_seed + conf.seed_offset + 1, conf.start_seed + conf.n_runs + 1):
         conf.cur_seed = seed
         np.random.seed(seed)
         torch.manual_seed(seed)
+        if conf.fix_teacher_change_data:
+            train_loader, test_loader = create_dataloaders(conf, teacher_weights)
         weights = torch.randn(conf.n_hidden, conf.n_features, requires_grad=True)
         conf.logger.info(f"initial weights: {weights[0]}")
         optimizer = torch.optim.SGD(
@@ -53,6 +49,7 @@ if __name__ == "__main__":
             {
                 "seed": seed,
                 "start_seed": conf.start_seed,
+                "fix_teacher_change_data": conf.fix_teacher_change_data,
                 "activation": conf.activation,
                 "second_layer_activation": conf.second_layer_activation,
                 "loss_eps": conf.loss_eps,

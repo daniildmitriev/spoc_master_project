@@ -156,6 +156,13 @@ def get_args():
         help="if True, multiply batch_size by sample complexity"
     )
 
+    parser.add_argument(
+        "--fix_teacher_change_data", 
+        default=False, 
+        type=str2bool, 
+        help="if True, use the same teacher vector, but different data for each seed"
+    )
+
     conf = parser.parse_args()
     return conf
 
