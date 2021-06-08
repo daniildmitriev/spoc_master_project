@@ -1,45 +1,8 @@
 import torch
 import numpy as np
 import scipy.stats as sps
-from torch.utils.data import Sampler
+from torch.utils.data import Sampler, DataLoader, TensorDataset
 
-
-def create_dataset(conf):
-    """
-    params:
-    n_train: number of samples in the train dataset
-    n_test: number of samples in the test dataset
-    n_features: number of features
-    returns:
-    train_data
-    train_labels
-    test_data
-    test_labels
-    """
-    if conf.labels == "symmetric-door":
-        teacher_weights = 2 * torch.randint(low=0, 
-                                            high=2, 
-                                            size=(conf.n_features,), 
-                                            dtype=torch.float) - 1
-    else:
-        teacher_weights = torch.randn(conf.n_features)
-    train_data = torch.normal(
-        0, std=1 / np.sqrt(conf.n_features), size=(conf.n_features, conf.n_train)
-    )
-    test_data = torch.normal(0, std=1 / np.sqrt(conf.n_features), 
-                             size=(conf.n_features, conf.n_test))
-    train_mult = teacher_weights.matmul(train_data)
-    test_mult = teacher_weights.matmul(test_data)
-    if conf.labels == "quadratic":
-        train_labels = train_mult ** 2
-        test_labels = test_mult ** 2
-    elif conf.labels == "absolute":
-        train_labels = torch.abs(train_mult)
-        test_labels = torch.abs(test_mult)
-    elif conf.labels == "symmetric-door":
-        train_labels = torch.sign(torch.abs(train_mult) - conf.symmetric_door_channel_K)
-        test_labels = torch.sign(torch.abs(test_mult) - conf.symmetric_door_channel_K)
-    return train_data, train_labels, test_data, test_labels
 
 class PoisSampler(Sampler[int]):
     r"""Samples elements as Poisson random process. Used in Persistent-SGD
@@ -78,3 +41,65 @@ class PoisSampler(Sampler[int]):
 
     def __len__(self):
         return self.num_iters
+
+def create_dataset(conf, teacher_weights=None):
+    """
+    params:
+    n_train: number of samples in the train dataset
+    n_test: number of samples in the test dataset
+    n_features: number of features
+    returns:
+    train_data
+    train_labels
+    test_data
+    test_labels
+    """
+    if teacher_weights is None:
+        if conf.labels == "symmetric-door":
+            teacher_weights = 2 * torch.randint(low=0, 
+                                                high=2, 
+                                                size=(conf.n_features,), 
+                                                dtype=torch.float) - 1
+        else:
+            teacher_weights = torch.randn(conf.n_features)
+    train_data = torch.normal(
+        0, std=1 / np.sqrt(conf.n_features), size=(conf.n_features, conf.n_train)
+    )
+    test_data = torch.normal(0, std=1 / np.sqrt(conf.n_features), 
+                             size=(conf.n_features, conf.n_test))
+    train_mult = teacher_weights.matmul(train_data)
+    test_mult = teacher_weights.matmul(test_data)
+    if conf.labels == "quadratic":
+        train_labels = train_mult ** 2
+        test_labels = test_mult ** 2
+    elif conf.labels == "absolute":
+        train_labels = torch.abs(train_mult)
+        test_labels = torch.abs(test_mult)
+    elif conf.labels == "symmetric-door":
+        train_labels = torch.sign(torch.abs(train_mult) - conf.symmetric_door_channel_K)
+        test_labels = torch.sign(torch.abs(test_mult) - conf.symmetric_door_channel_K)
+    return train_data, train_labels, test_data, test_labels
+
+def from_data_to_dataloader(conf, train_data, train_labels, test_data, test_labels):
+    if conf.optimizer == "p-sgd":
+        pois_sampler = PoisSampler(
+            train_data.T, conf.batch_size, conf.lr, conf.persistence_time
+        )
+        train_loader = DataLoader(
+            TensorDataset(train_data.T, train_labels.T), batch_sampler=pois_sampler
+        )
+    else:
+        train_loader = DataLoader(
+            TensorDataset(train_data.T, train_labels.T), 
+            batch_size=conf.batch_size,
+            shuffle=True,
+            drop_last=True # to avoid rounding errors
+        )
+    test_loader = DataLoader(
+        TensorDataset(test_data.T, test_labels.T), batch_size=conf.n_test
+    )
+    return train_loader, test_loader
+
+def create_dataloaders(conf, teacher_weights=None):
+    train_data, train_labels, test_data, test_labels = create_dataset(conf, teacher_weights)
+    return from_data_to_dataloader(conf, train_data, train_labels, test_data, test_labels)
