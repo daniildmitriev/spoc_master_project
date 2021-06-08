@@ -5,7 +5,7 @@ from torch.utils.data import DataLoader, TensorDataset
 import parameters
 from create_conf import create_conf
 from simulation import check_success_sgd
-from utils import create_dataset, PoisSampler
+from utils import create_dataloaders
 
 if __name__ == "__main__":
     conf = parameters.get_args()
