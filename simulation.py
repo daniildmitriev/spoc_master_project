@@ -27,6 +27,10 @@ def model(conf, data, weights, train=True):
     elif conf.activation == 'relu':
         first_layer_output = torch.maximum(first_layer_output, 
                                            torch.zeros_like(first_layer_output))
+    elif conf.activation == 'relu-quadratic':
+        first_layer_output = torch.maximum(first_layer_output ** 2 * \
+                                           torch.sign(first_layer_output), 
+                                           torch.zeros_like(first_layer_output))
     first_layer_output = torch.mean(first_layer_output, axis=0) # + bias <- to learn
    
 
