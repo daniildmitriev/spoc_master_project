@@ -139,6 +139,7 @@ def create_conf(conf):
                        second_layer_activation: {conf.second_layer_activation} \n \
                        loss_eps: {conf.loss_eps} \n \
                        tau: {conf.persistence_time} \n \
+                       mult_lr_by_nhidden: {conf.mult_lr_by_nhidden} \n \
                        symmetric_door_k: {conf.symmetric_door_channel_K} \n \
                        project_on_sphere: {conf.project_on_sphere} \n \
                        early_stopping_epochs: {conf.early_stopping_epochs} \n \
