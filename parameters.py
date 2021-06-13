@@ -163,6 +163,13 @@ def get_args():
         help="if True, use the same teacher vector, but different data for each seed"
     )
 
+    parser.add_argument(
+        "--mult_lr_by_nhidden", 
+        default=False, 
+        type=str2bool, 
+        help="if True, multiply learning rate by the number of hidden units (only there)"
+    )
+
     conf = parser.parse_args()
     return conf
 

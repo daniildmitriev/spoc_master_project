@@ -35,9 +35,12 @@ if __name__ == "__main__":
             train_loader, test_loader = create_dataloaders(conf, teacher_weights)
         weights = torch.randn(conf.n_hidden, conf.n_features, requires_grad=True)
         conf.logger.info(f"initial weights: {weights[0]}")
+        lr = conf.lr
+        if conf.mult_lr_by_nhidden:
+            lr *= conf.n_hidden
         optimizer = torch.optim.SGD(
             [weights],
-            lr=conf.lr,
+            lr=lr,
             momentum=conf.momentum_factor,
             weight_decay=conf.weight_decay,
             nesterov=conf.use_nesterov
