@@ -53,6 +53,7 @@ if __name__ == "__main__":
                 "seed": seed,
                 "start_seed": conf.start_seed,
                 "fix_teacher_change_data": conf.fix_teacher_change_data,
+                "mult_lr_by_nhidden": conf.mult_lr_by_nhidden,
                 "activation": conf.activation,
                 "second_layer_activation": conf.second_layer_activation,
                 "loss_eps": conf.loss_eps,
