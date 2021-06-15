@@ -23,6 +23,8 @@ if __name__ == "__main__":
                                                 dtype=torch.float) - 1
         else:
             teacher_weights = torch.randn(conf.n_features)
+            if conf.reverse_mult_by_sqrt:
+                teacher_weights /= np.sqrt(conf.n_features)
     else:
         train_loader, test_loader = create_dataloaders(conf)
     
@@ -34,6 +36,10 @@ if __name__ == "__main__":
         if conf.fix_teacher_change_data:
             train_loader, test_loader = create_dataloaders(conf, teacher_weights)
         weights = torch.randn(conf.n_hidden, conf.n_features, requires_grad=True)
+        if conf.reverse_mult_by_sqrt:
+            with torch.no_grad():
+                w = weights.data
+                w.div_(np.sqrt(conf.n_features))
         conf.logger.info(f"initial weights: {weights[0]}")
         lr = conf.lr
         if conf.mult_lr_by_nhidden:

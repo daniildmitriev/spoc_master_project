@@ -63,11 +63,18 @@ def create_dataset(conf, teacher_weights=None):
                                                 dtype=torch.float) - 1
         else:
             teacher_weights = torch.randn(conf.n_features)
-    train_data = torch.normal(
-        0, std=1 / np.sqrt(conf.n_features), size=(conf.n_features, conf.n_train)
-    )
-    test_data = torch.normal(0, std=1 / np.sqrt(conf.n_features), 
-                             size=(conf.n_features, conf.n_test))
+            if conf.reverse_mult_by_sqrt:
+                teacher_weights /= np.sqrt(conf.n_features)
+    if conf.reverse_mult_by_sqrt:
+        train_data = torch.normal(size=(conf.n_features, conf.n_train))
+        test_data = torch.normal(size=(conf.n_features, conf.n_test))
+    else:
+        train_data = torch.normal(0, 
+                                  std=1 / np.sqrt(conf.n_features), 
+                                  size=(conf.n_features, conf.n_train))
+        test_data = torch.normal(0, 
+                                 std=1 / np.sqrt(conf.n_features), 
+                                 size=(conf.n_features, conf.n_test))
     train_mult = teacher_weights.matmul(train_data)
     test_mult = teacher_weights.matmul(test_data)
     if conf.labels == "quadratic":
