@@ -66,8 +66,8 @@ def create_dataset(conf, teacher_weights=None):
             if conf.reverse_mult_by_sqrt:
                 teacher_weights /= np.sqrt(conf.n_features)
     if conf.reverse_mult_by_sqrt:
-        train_data = torch.normal(size=(conf.n_features, conf.n_train))
-        test_data = torch.normal(size=(conf.n_features, conf.n_test))
+        train_data = torch.normal(0, std=1, size=(conf.n_features, conf.n_train))
+        test_data = torch.normal(0, std=1, size=(conf.n_features, conf.n_test))
     else:
         train_data = torch.normal(0, 
                                   std=1 / np.sqrt(conf.n_features), 
