@@ -103,9 +103,9 @@ def check_success_sgd(
             batch_labels = batch_labels.T
             optimizer.zero_grad()
             y_pred = model(conf, batch_data, weights, train=True)
-            cur_loss = loss(conf, y_pred, batch_labels)
-            cur_loss.backward()
-            train_loss += cur_loss.item()
+            batch_loss = loss(conf, y_pred, batch_labels)
+            batch_loss.backward()
+            train_loss += batch_loss.item()
             optimizer.step()
             train_error += error(conf, y_pred, batch_labels).item()
             train_n_batches += 1
@@ -115,7 +115,17 @@ def check_success_sgd(
             # perform exponential averaging of the max gradient value
             max_gradient = 0.9 * max_gradient + 0.1 * cur_max_gradient
             
-                # projecting on spherel
+            # computing difference between true grad and batch grad
+            if conf.compute_grad_dif:
+                batch_grad = weights.grad
+                optimizer.zero_grad()
+                y_pred = model(conf, conf.train_data, weights, train=True)
+                full_loss = loss(conf, y_pred, conf.train_labels)
+                full_loss.backward()
+                full_grad = weights.grad
+                conf.logger.info(f"grad dif: {torch.norm(full_grad - batch_grad)}")
+            
+            # projecting on sphere
             if conf.project_on_sphere:
                 with torch.no_grad():
                     w = weights.data

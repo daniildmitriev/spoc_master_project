@@ -108,6 +108,8 @@ def from_data_to_dataloader(conf, train_data, train_labels, test_data, test_labe
     )
     return train_loader, test_loader
 
-def create_dataloaders(conf, teacher_weights=None):
+def create_dataloaders(conf, teacher_weights=None, return_full_dataloader=False):
     train_data, train_labels, test_data, test_labels = create_dataset(conf, teacher_weights)
+    conf.train_data = train_data
+    conf.train_labels = train_labels
     return from_data_to_dataloader(conf, train_data, train_labels, test_data, test_labels)
