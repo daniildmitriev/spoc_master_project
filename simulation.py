@@ -123,7 +123,9 @@ def check_success_sgd(
                 full_loss = loss(conf, y_pred, conf.train_labels)
                 full_loss.backward()
                 full_grad = deepcopy(weights.grad.data)
-                conf.logger.info(f"grad dif: {torch.norm(full_grad - batch_grad)}")
+                grad_dif = torch.linalg.norm(full_grad - batch_grad).item()
+                noise = torch.normal(0, std=np.sqrt(grad_dif), size=(conf.n_hidden, conf.n_features))
+                conf.logger.info(f"grad dif: {grad_dif}, noise norm: {torch.linalg.norm(noise)}")
             
             # projecting on sphere
             if conf.project_on_sphere:
