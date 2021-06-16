@@ -1,6 +1,6 @@
 import numpy as np
 import torch
-from copy import copy
+from copy import deepcopy
 from torch.utils.data import TensorDataset
 from torch.autograd.functional import hessian
 
@@ -117,13 +117,16 @@ def check_success_sgd(
             
             # computing difference between true grad and batch grad
             if conf.compute_grad_dif:
-                batch_grad = copy(weights.grad.data)
+                batch_grad = deepcopy(weights.grad.data)
+                print("batch grad", batch_grad)
                 weights.grad.data.zero_()
+                print("weights grad", weights.grad)
                 optimizer.zero_grad()
                 y_pred = model(conf, conf.train_data, weights, train=True)
                 full_loss = loss(conf, y_pred, conf.train_labels)
                 full_loss.backward()
-                full_grad = copy(weights.grad.data)
+                full_grad = deepcopy(weights.grad.data)
+                print("full grad")
                 conf.logger.info(f"grad dif: {torch.norm(full_grad - batch_grad)}")
             
             # projecting on sphere
