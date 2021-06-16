@@ -124,7 +124,8 @@ def check_success_sgd(
                 full_loss.backward()
                 full_grad = deepcopy(weights.grad.data)
                 grad_dif = torch.linalg.norm(full_grad - batch_grad).item()
-                noise = torch.normal(0, std=np.sqrt(grad_dif), size=(conf.n_hidden, conf.n_features))
+                noise = torch.normal(0, std=1, size=(conf.n_hidden, conf.n_features))
+                noise *= grad_dif / torch.linalg.norm(noise)
                 conf.logger.info(f"grad dif: {grad_dif}, noise norm: {torch.linalg.norm(noise)}")
             
             # projecting on sphere
