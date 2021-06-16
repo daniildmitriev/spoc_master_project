@@ -176,13 +176,6 @@ def get_args():
         type=str2bool, 
         help="if True, student and teacher are sampled from N(0, 1)/sqrt(n), and data from N(0, 1)"
     )
-
-    parser.add_argument(
-        "--reverse_mult_by_sqrt", 
-        default=False, 
-        type=str2bool, 
-        help="if True, student and teacher are sampled from N(0, 1)/sqrt(n), and data from N(0, 1)"
-    )
     
     parser.add_argument(
         "--compute_grad_dif", 
