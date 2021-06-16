@@ -117,12 +117,13 @@ def check_success_sgd(
             
             # computing difference between true grad and batch grad
             if conf.compute_grad_dif:
-                batch_grad = copy(weights.grad)
+                batch_grad = copy(weights.grad.data)
+                weights.grad.data.zero_()
                 optimizer.zero_grad()
                 y_pred = model(conf, conf.train_data, weights, train=True)
                 full_loss = loss(conf, y_pred, conf.train_labels)
                 full_loss.backward()
-                full_grad = copy(weights.grad)
+                full_grad = copy(weights.grad.data)
                 conf.logger.info(f"grad dif: {torch.norm(full_grad - batch_grad)}")
             
             # projecting on sphere
