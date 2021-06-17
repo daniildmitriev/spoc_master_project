@@ -150,7 +150,7 @@ def check_success_sgd(
 #                 noise = torch.normal(0, std=1, size=(conf.n_hidden,conf.n_features))
 #                 noise *= grad_dif / torch.linalg.norm(noise)
 
-                prev_grad = copy(batch_grad)
+                prev_grad = deepcopy(batch_grad)
             
             # projecting on sphere
             if conf.project_on_sphere:
