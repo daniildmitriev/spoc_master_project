@@ -87,11 +87,12 @@ def check_success_sgd(
     train_losses = []
     train_errors = []
     test_errors = []
+    grad_difs = []
     max_gradient = None
     best_loss = None
     best_loss_e = None
     if conf.compute_hessian and conf.save_eigenvalues:
-        eigenvalues = {}
+        eigenvalues = {'train': [], 'test': []}
     for epoch in range(int(conf.n_epochs * np.log2(conf.n_features + 1))):
         train_error = 0
         train_loss = 0
@@ -124,9 +125,10 @@ def check_success_sgd(
                 full_loss.backward()
                 full_grad = deepcopy(weights.grad.data)
                 grad_dif = torch.linalg.norm(full_grad - batch_grad).item()
-                noise = torch.normal(0, std=1, size=(conf.n_hidden, conf.n_features))
-                noise *= grad_dif / torch.linalg.norm(noise)
-                conf.logger.info(f"grad dif: {grad_dif}, noise norm: {torch.linalg.norm(noise)}")
+                grad_difs.append(grad_dif)
+#                 noise = torch.normal(0, std=1, size=(conf.n_hidden, conf.n_features))
+#                 noise *= grad_dif / torch.linalg.norm(noise)
+#                 conf.logger.info(f"grad dif: {grad_dif}, noise norm: {torch.linalg.norm(noise)}")
             
             # projecting on sphere
             if conf.project_on_sphere:
@@ -175,8 +177,8 @@ def check_success_sgd(
                 hessian_matrix_test = hessian_matrix_test.reshape((n_params, n_params))
                 eigvals_train = np.linalg.eigh(hessian_matrix_train)[0]
                 eigvals_test = np.linalg.eigh(hessian_matrix_test)[0]
-                eigenvalues[('train', epoch)] = eigvals_train
-                eigenvalues[('test', epoch)] = eigvals_test
+                eigenvalues['train'].append(eigvals_train)
+                eigenvalues['test'].append(eigvals_test)
             else:
                 conf.logger.save_tensor(hessian_matrix_train, f"hessian_train_seed_{conf.cur_seed}", epoch)
                 conf.logger.save_tensor(hessian_matrix_test, f"hessian_test_seed_{conf.cur_seed}", epoch)
@@ -189,11 +191,13 @@ def check_success_sgd(
             hessian_matrix_test = hessian_matrix_test.reshape((n_params, n_params))
             eigvals_train = np.linalg.eigh(hessian_matrix_train)[0]
             eigvals_test = np.linalg.eigh(hessian_matrix_test)[0]
-            eigenvalues[('train', epoch)] = eigvals_train
-            eigenvalues[('test', epoch)] = eigvals_test
+            eigenvalues['train'].append(eigvals_train)
+            eigenvalues['test'].append(eigvals_test)
             conf.logger.save_pickle(eigenvalues, f"eigenvalues_seed_{conf.cur_seed}")
         else:
             conf.logger.save_tensor(hessian_matrix_train, f"hessian_train_seed_{conf.cur_seed}", epoch)
             conf.logger.save_tensor(hessian_matrix_test, f"hessian_test_seed_{conf.cur_seed}", epoch)
         conf.logger.save_tensor(weights, f"weights_seed_{conf.cur_seed}", epoch)
+    if conf.compute_grad_dif:
+        conf.logger.save_pickle(grad_difs, f"grad_difs_seed_{conf.cur_seed}")
     return train_losses, train_errors, test_errors
