@@ -1,7 +1,7 @@
 import torch
 from torch.optim.optimizer import Optimizer, required
 
-class LangevinDyn(Optimizer):
+class Langevin(Optimizer):
     """Implements Lagevin Dynamics with variate noise
     """
 
