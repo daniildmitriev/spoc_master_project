@@ -104,6 +104,7 @@ def check_success_sgd(
         for batch_data, batch_labels in train_loader:
             batch_data = batch_data.T
             batch_labels = batch_labels.T
+            conf.logger.info(f"batch shapes: {batch_data.shape}, {batch_labels.shape}")
             optimizer.zero_grad()
             y_pred = model(conf, batch_data, weights, train=True)
             batch_loss = loss(conf, y_pred, batch_labels)
@@ -128,6 +129,7 @@ def check_success_sgd(
                 optimizer.zero_grad()
                 y_pred = model(conf, conf.train_data, weights, train=True)
                 full_loss = loss(conf, y_pred, conf.train_labels)
+                conf.logger.info(f"train shapes: {conf.train_data.shape}, {conf.train_labels.shape}")
                 full_loss.backward()
                 full_grad = deepcopy(weights.grad.data)
                 conf.logger.info('----------------')
