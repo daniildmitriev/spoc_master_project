@@ -18,10 +18,10 @@ class Langevin(Optimizer):
                         weight_decay=weight_decay, nesterov=nesterov)
         if nesterov and (momentum <= 0 or dampening != 0):
             raise ValueError("Nesterov momentum requires a momentum and zero dampening")
-        super(SGLD, self).__init__(params, defaults)
+        super(Langevin, self).__init__(params, defaults)
 
     def __setstate__(self, state):
-        super(SGLD, self).__setstate__(state)
+        super(Langevin, self).__setstate__(state)
         for group in self.param_groups:
             group.setdefault('nesterov', False)
 
