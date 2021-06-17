@@ -92,7 +92,7 @@ def check_success_sgd(
     best_loss = None
     best_loss_e = None
     cur_iter = 0
-    weights = []
+    saved_weights = []
     if conf.compute_hessian and conf.save_eigenvalues:
         eigenvalues = {'train': [], 'test': []}
     for epoch in range(int(conf.n_epochs * np.log2(conf.n_features + 1))):
