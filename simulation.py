@@ -92,6 +92,7 @@ def check_success_sgd(
     best_loss = None
     best_loss_e = None
     cur_iter = 0
+    weights = []
     if conf.compute_hessian and conf.save_eigenvalues:
         eigenvalues = {'train': [], 'test': []}
     for epoch in range(int(conf.n_epochs * np.log2(conf.n_features + 1))):
@@ -133,9 +134,12 @@ def check_success_sgd(
                 full_grad *= conf.batch_size / conf.n_train
                 grad_dif = torch.linalg.norm(full_grad - batch_grad).item()
                 grad_difs.append(grad_dif)
-#                 noise = torch.normal(0, std=1, size=(conf.n_hidden, conf.n_features))
+#                 noise = torch.normal(0, std=1, size=(conf.n_hidden,conf.n_features))
 #                 noise *= grad_dif / torch.linalg.norm(noise)
-#                 conf.logger.info(f"grad dif: {grad_dif}, noise norm: {torch.linalg.norm(noise)}")
+                conf.logger.info('----------------')
+                conf.logger.info(f"full_grad_norm: {torch.linalg.norm(full_grad)}")
+                conf.logger.info(f"batch_grad_norm: {torch.linalg.norm(batch_grad)}")
+                conf.logger.info(f"grad dif: {grad_dif}")
             
             # projecting on sphere
             if conf.project_on_sphere:
