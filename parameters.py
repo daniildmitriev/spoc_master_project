@@ -185,7 +185,7 @@ def get_args():
     )
 
     parser.add_argument(
-        "--noise_std_file", 
+        "--noise_std_dir", 
         default=None, 
         type=str, 
         help="path to file contatining noise std per iteration"
