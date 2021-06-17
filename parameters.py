@@ -183,6 +183,13 @@ def get_args():
         type=str2bool, 
         help="if True, compute and save the difference between full gradient and batch gradient"
     )
+
+    parser.add_argument(
+        "--noise_std_file", 
+        default=None, 
+        type=str, 
+        help="path to file contatining noise std per iteration"
+    )
     
 
     conf = parser.parse_args()

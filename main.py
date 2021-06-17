@@ -1,6 +1,7 @@
 import torch
 import numpy as np
 from torch.utils.data import DataLoader, TensorDataset
+from langevin import Langevin
 
 import parameters
 from create_conf import create_conf
@@ -10,7 +11,7 @@ from utils import create_dataloaders
 if __name__ == "__main__":
     conf = parameters.get_args()
     conf = create_conf(conf)
-    if conf.optimizer == "gd":
+    if conf.optimizer in ["gd", "langevin"]:
         assert conf.batch_size == conf.n_train
     np.random.seed(conf.start_seed)
     torch.manual_seed(conf.start_seed)
@@ -44,13 +45,21 @@ if __name__ == "__main__":
         lr = conf.lr
         if conf.mult_lr_by_nhidden:
             lr *= conf.n_hidden
-        optimizer = torch.optim.SGD(
-            [weights],
-            lr=lr,
-            momentum=conf.momentum_factor,
-            weight_decay=conf.weight_decay,
-            nesterov=conf.use_nesterov
-        )
+        if conf.optimizer == "langevin":
+            optimizer = Langevin([weights],
+                                 lr=lr,
+                                 momentum=conf.momentum_factor,
+                                 weight_decay=conf.weight_decay,
+                                 nesterov=conf.use_nesterov)
+            conf.noise_std = pickle.load(open(f"{conf.noise_std_dir}_seed_{seed}.pkl", "rb"))
+        else:
+            optimizer = torch.optim.SGD(
+                [weights],
+                lr=lr,
+                momentum=conf.momentum_factor,
+                weight_decay=conf.weight_decay,
+                nesterov=conf.use_nesterov
+            )
         train_losses, train_errors, test_errors = check_success_sgd(
             conf, train_loader, test_loader, optimizer, weights, verbose=False
         )

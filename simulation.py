@@ -91,6 +91,7 @@ def check_success_sgd(
     max_gradient = None
     best_loss = None
     best_loss_e = None
+    cur_iter = 0
     if conf.compute_hessian and conf.save_eigenvalues:
         eigenvalues = {'train': [], 'test': []}
     for epoch in range(int(conf.n_epochs * np.log2(conf.n_features + 1))):
@@ -107,7 +108,11 @@ def check_success_sgd(
             batch_loss = loss(conf, y_pred, batch_labels)
             batch_loss.backward()
             train_loss += batch_loss.item()
-            optimizer.step()
+            if conf.optimizer == "langevin":
+                optimizer.step(conf.noise_std[cur_iter])
+                cur_iter += 1
+            else:
+                optimizer.step()
             train_error += error(conf, y_pred, batch_labels).item()
             train_n_batches += 1
             cur_max_gradient = torch.max(torch.abs(weights.grad))

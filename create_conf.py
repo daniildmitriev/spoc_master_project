@@ -119,8 +119,9 @@ def create_conf(conf):
     conf.n_train = int(conf.sample_complexity * conf.n_features)
     if conf.n_test is None:
         conf.n_test = conf.n_train
-    if conf.optimizer == "gd":
+    if conf.optimizer in ["gd", "langevin"]:
         conf.batch_size = conf.n_train
+    assert conf.optimizer != "langevin" or conf.noise_std_dir is not None
     if (conf.optimizer in ["p-sgd", "sgd"]) and conf.psgd_adaptive_bs:
         conf.batch_size = int(conf.batch_size * conf.sample_complexity)
     assert conf.activation in ["quadratic", "absolute", "relu", "linear", "relu-quadratic"]
@@ -145,6 +146,7 @@ def create_conf(conf):
                        early_stopping_epochs: {conf.early_stopping_epochs} \n \
                        weight_decay: {conf.weight_decay} \n \
                        batch_size: {conf.batch_size} \n \
+                       noise_std_dir: {conf.noise_std_dir} \n \
                        n_epochs: {conf.n_epochs} \n \
                        n_test: {conf.n_test}")
     if conf.optimizer == "p-sgd":
