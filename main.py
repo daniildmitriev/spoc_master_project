@@ -52,7 +52,8 @@ if __name__ == "__main__":
                                  momentum=conf.momentum_factor,
                                  weight_decay=conf.weight_decay,
                                  nesterov=conf.use_nesterov)
-            conf.noise_std = pickle.load(open(f"{conf.noise_std_dir}_seed_{seed}.pkl", "rb"))
+            conf.noise_std = pickle.load(open(f"{conf.noise_std_dir}/grad_difs_seed_{seed}.pkl", 
+                                              "rb"))
         else:
             optimizer = torch.optim.SGD(
                 [weights],
