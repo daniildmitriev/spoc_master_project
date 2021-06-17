@@ -130,14 +130,15 @@ def check_success_sgd(
                 full_loss = loss(conf, y_pred, conf.train_labels)
                 full_loss.backward()
                 full_grad = deepcopy(weights.grad.data)
+                conf.logger.info('----------------')
+                conf.logger.info(f"full_grad_norm before: {torch.linalg.norm(full_grad)}")
                 # account for different batch sizes
                 full_grad *= conf.batch_size / conf.n_train
                 grad_dif = torch.linalg.norm(full_grad - batch_grad).item()
                 grad_difs.append(grad_dif)
 #                 noise = torch.normal(0, std=1, size=(conf.n_hidden,conf.n_features))
 #                 noise *= grad_dif / torch.linalg.norm(noise)
-                conf.logger.info('----------------')
-                conf.logger.info(f"full_grad_norm: {torch.linalg.norm(full_grad)}")
+                conf.logger.info(f"full_grad_norm after: {torch.linalg.norm(full_grad)}")
                 conf.logger.info(f"batch_grad_norm: {torch.linalg.norm(batch_grad)}")
                 conf.logger.info(f"grad dif: {grad_dif}")
             
