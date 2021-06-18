@@ -111,7 +111,7 @@ def check_success_sgd(
             batch_loss.backward()
             train_loss += batch_loss.item()
             if conf.optimizer == "langevin":
-                if cur_iter >= conf.noise_std[cur_iter]:
+                if cur_iter >= len(conf.noise_std[cur_iter]):
                     optimizer.step(0)
                 else:
                     optimizer.step(conf.noise_std[cur_iter])
