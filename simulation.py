@@ -130,9 +130,9 @@ def check_success_sgd(
                     grad_difs.append(0)
                 else:
                     grad_dif = torch.linalg.norm(batch_grad - prev_grad).item()
-                    conf.logger.info(f"prev_grad: {torch.linalg.norm(prev_grad)}")
-                    conf.logger.info(f"batch_grad_norm: {torch.linalg.norm(batch_grad)}")
-                    conf.logger.info(f"grad dif: {grad_dif}")
+#                     conf.logger.info(f"prev_grad: {torch.linalg.norm(prev_grad)}")
+#                     conf.logger.info(f"batch_grad_norm: {torch.linalg.norm(batch_grad)}")
+#                     conf.logger.info(f"grad dif: {grad_dif}")
                     grad_difs.append(grad_dif)
 #                 optimizer.zero_grad()
 #                 y_pred = model(conf, conf.train_data, weights, train=True)
