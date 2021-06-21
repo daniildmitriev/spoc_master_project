@@ -122,7 +122,7 @@ def create_conf(conf):
     if conf.optimizer in ["gd", "langevin"]:
         conf.batch_size = conf.n_train
     assert conf.optimizer != "langevin" or conf.noise_std_dir is not None
-    if (conf.optimizer in ["p-sgd", "sgd"]) and conf.psgd_adaptive_bs:
+    if (conf.optimizer in ["p-sgd", "sgd", "adam"]) and conf.psgd_adaptive_bs:
         conf.batch_size = int(conf.batch_size * conf.sample_complexity)
     assert conf.activation in ["quadratic", "absolute", "relu", "linear", "relu-quadratic"]
     assert (conf.second_layer_activation is None or 

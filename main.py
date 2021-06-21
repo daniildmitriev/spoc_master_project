@@ -54,6 +54,10 @@ if __name__ == "__main__":
                                  nesterov=conf.use_nesterov)
             conf.noise_std = pickle.load(open(f"{conf.noise_std_dir}/grad_difs_seed_{seed}.pkl", 
                                               "rb"))
+        elif conf.optimizer == "adam":
+            optimizer = torch.optim.Adam([weights],
+                                         lr=lr,
+                                         weight_decay=conf.weight_decay)
         else:
             optimizer = torch.optim.SGD(
                 [weights],
