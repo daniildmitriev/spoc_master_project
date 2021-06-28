@@ -94,6 +94,7 @@ def check_success_sgd(
     cur_iter = 0
     saved_weights = []
     prev_grad = None
+    grads = []
     if conf.compute_hessian and conf.save_eigenvalues:
         eigenvalues = {'train': [], 'test': []}
     for epoch in range(int(conf.n_epochs * np.log2(conf.n_features + 1))):
@@ -125,7 +126,13 @@ def check_success_sgd(
                 max_gradient = cur_max_gradient
             # perform exponential averaging of the max gradient value
             max_gradient = 0.9 * max_gradient + 0.1 * cur_max_gradient
-            
+            if conf.save_grads:
+                batch_grad = deepcopy(weights.grad.data)
+                grads.append(batch_grad)
+            if conf.save_momentum:
+                for p, param_state in optimizer.state.items():
+                    print(p)
+                    assert False
             # computing difference between true grad and batch grad
             if conf.compute_grad_dif:
                 batch_grad = deepcopy(weights.grad.data)
@@ -224,4 +231,6 @@ def check_success_sgd(
         conf.logger.save_tensor(weights, f"weights_seed_{conf.cur_seed}", epoch)
     if conf.compute_grad_dif:
         conf.logger.save_pickle(grad_difs, f"grad_difs_seed_{conf.cur_seed}")
+    if conf.save_grads:
+        conf.logger.save_pickle(grads, f"grads_seed_{conf.cur_seed}")
     return train_losses, train_errors, test_errors

@@ -191,6 +191,19 @@ def get_args():
         help="path to file contatining noise std per iteration"
     )
     
+    parser.add_argument(
+        "--save_grads", 
+        default=False, 
+        type=str2bool, 
+        help="if True, save the batch gradients each iteration"
+    )
+    parser.add_argument(
+        "--save_momentum", 
+        default=False, 
+        type=str2bool, 
+        help="if True, save the momentum each iteration"
+    )
+    
 
     conf = parser.parse_args()
     return conf
