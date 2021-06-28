@@ -95,6 +95,7 @@ def check_success_sgd(
     saved_weights = []
     prev_grad = None
     grads = []
+    momentums = []
     if conf.compute_hessian and conf.save_eigenvalues:
         eigenvalues = {'train': [], 'test': []}
     for epoch in range(int(conf.n_epochs * np.log2(conf.n_features + 1))):
@@ -133,7 +134,7 @@ def check_success_sgd(
                 for p, param_state in optimizer.state.items():
                     conf.logger.info(f"param: {p}")
                     conf.logger.info(f"state {param_state}")
-                assert False
+                    momentums.append(param_state["momentum_buffer"])
             # computing difference between true grad and batch grad
             if conf.compute_grad_dif:
                 batch_grad = deepcopy(weights.grad.data)
@@ -233,5 +234,7 @@ def check_success_sgd(
     if conf.compute_grad_dif:
         conf.logger.save_pickle(grad_difs, f"grad_difs_seed_{conf.cur_seed}")
     if conf.save_grads:
+        conf.logger.save_pickle(grads, f"grads_seed_{conf.cur_seed}")
+    if conf.save_momentum:
         conf.logger.save_pickle(grads, f"grads_seed_{conf.cur_seed}")
     return train_losses, train_errors, test_errors
