@@ -234,5 +234,5 @@ def check_success_sgd(
     if conf.save_grads:
         conf.logger.save_pickle(grads, f"grads_seed_{conf.cur_seed}")
     if conf.save_momentum:
-        conf.logger.save_pickle(grads, f"momentums_seed_{conf.cur_seed}")
+        conf.logger.save_pickle(momentums, f"momentums_seed_{conf.cur_seed}")
     return train_losses, train_errors, test_errors
