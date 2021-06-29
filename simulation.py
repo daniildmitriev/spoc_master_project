@@ -132,7 +132,7 @@ def check_success_sgd(
                 grads.append(batch_grad)
             if conf.save_momentum:
                 for _, param_state in optimizer.state.items():
-                    momentums.append(param_state["momentum_buffer"])
+                    momentums.append(deepcopy(param_state["momentum_buffer"]))
             # computing difference between true grad and batch grad
             if conf.compute_grad_dif:
                 batch_grad = deepcopy(weights.grad.data)
