@@ -73,6 +73,7 @@ if __name__ == "__main__":
             {
                 "seed": seed,
                 "start_seed": conf.start_seed,
+                "teacher_n_hidden": conf.teacher_n_hidden,
                 "fix_teacher_change_data": conf.fix_teacher_change_data,
                 "reverse_mult_by_sqrt": conf.reverse_mult_by_sqrt,
                 "mult_lr_by_nhidden": conf.mult_lr_by_nhidden,
