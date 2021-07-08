@@ -46,6 +46,7 @@ def get_args():
     )
     parser.add_argument("--n_features", type=int, help="number of features")
     parser.add_argument("--n_hidden", type=int, help="number of hidden units")
+    parser.add_argument("--teacher_n_hidden", type=int, help="number of hidden units in the teacher")
     parser.add_argument(
         "--project_on_sphere", 
         default=False, 

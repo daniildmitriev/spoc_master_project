@@ -59,10 +59,10 @@ def create_dataset(conf, teacher_weights=None):
         if conf.labels == "symmetric-door":
             teacher_weights = 2 * torch.randint(low=0, 
                                                 high=2, 
-                                                size=(conf.n_features,), 
+                                                size=(conf.teacher_n_hidden, conf.n_features), 
                                                 dtype=torch.float) - 1
         else:
-            teacher_weights = torch.randn(conf.n_features)
+            teacher_weights = torch.randn(conf.teacher_n_hidden, conf.n_features)
             if conf.reverse_mult_by_sqrt:
                 teacher_weights /= np.sqrt(conf.n_features)
     if conf.reverse_mult_by_sqrt:
@@ -86,6 +86,11 @@ def create_dataset(conf, teacher_weights=None):
     elif conf.labels == "symmetric-door":
         train_labels = torch.sign(torch.abs(train_mult) - conf.symmetric_door_channel_K)
         test_labels = torch.sign(torch.abs(test_mult) - conf.symmetric_door_channel_K)
+    elif conf.labels == "relu":
+        train_labels = torch.maximum(train_mult, torch.zeros_like(train_mult))
+        test_labels = torch.maximum(test_mult, torch.zeros_like(test_mult))
+    train_labels = torch.mean(train_labels, axis=0)
+    test_labels = torch.mean(test_labels, axis=0)
     return train_data, train_labels, test_data, test_labels
 
 def from_data_to_dataloader(conf, train_data, train_labels, test_data, test_labels):

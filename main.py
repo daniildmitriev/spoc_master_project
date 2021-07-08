@@ -21,10 +21,10 @@ if __name__ == "__main__":
         if conf.labels == "symmetric-door":
             teacher_weights = 2 * torch.randint(low=0, 
                                                 high=2, 
-                                                size=(conf.n_features,), 
+                                                size=(conf.teacher_n_hidden, conf.n_features), 
                                                 dtype=torch.float) - 1
         else:
-            teacher_weights = torch.randn(conf.n_features)
+            teacher_weights = torch.randn(conf.teacher_n_hidden, conf.n_features)
             if conf.reverse_mult_by_sqrt:
                 teacher_weights /= np.sqrt(conf.n_features)
     else:

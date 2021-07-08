@@ -140,24 +140,7 @@ def check_success_sgd(
                     grad_difs.append(0)
                 else:
                     grad_dif = torch.linalg.norm(batch_grad - prev_grad).item()
-#                     conf.logger.info(f"prev_grad: {torch.linalg.norm(prev_grad)}")
-#                     conf.logger.info(f"batch_grad_norm: {torch.linalg.norm(batch_grad)}")
-#                     conf.logger.info(f"grad dif: {grad_dif}")
                     grad_difs.append(grad_dif)
-#                 optimizer.zero_grad()
-#                 y_pred = model(conf, conf.train_data, weights, train=True)
-#                 full_loss = loss(conf, y_pred, conf.train_labels)
-#                 conf.logger.info(f"train shapes: {conf.train_data.shape}, {conf.train_labels.shape}")
-#                 full_loss.backward()
-#                 full_grad = deepcopy(weights.grad.data)
-#                 conf.logger.info('----------------')
-#                 conf.logger.info(f"full_grad_norm before: {torch.linalg.norm(full_grad)}")
-#                 # account for different batch sizes
-#                 full_grad *= conf.batch_size / conf.n_train
-#                 grad_dif = torch.linalg.norm(full_grad - batch_grad).item()
-#                 grad_difs.append(grad_dif)
-#                 noise = torch.normal(0, std=1, size=(conf.n_hidden,conf.n_features))
-#                 noise *= grad_dif / torch.linalg.norm(noise)
 
                 prev_grad = deepcopy(batch_grad)
             
