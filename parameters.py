@@ -46,7 +46,10 @@ def get_args():
     )
     parser.add_argument("--n_features", type=int, help="number of features")
     parser.add_argument("--n_hidden", type=int, help="number of hidden units")
-    parser.add_argument("--teacher_n_hidden", type=int, help="number of hidden units in the teacher")
+    parser.add_argument("--teacher_n_hidden", 
+                        type=int, 
+                        default=1, 
+                        help="number of hidden units in the teacher")
     parser.add_argument(
         "--project_on_sphere", 
         default=False, 
@@ -162,6 +165,13 @@ def get_args():
         default=False, 
         type=str2bool, 
         help="if True, use the same teacher vector, but different data for each seed"
+    )
+
+    parser.add_argument(
+        "--change_teacher", 
+        default=False, 
+        type=str2bool, 
+        help="if True, use different teacher vector"
     )
 
     parser.add_argument(

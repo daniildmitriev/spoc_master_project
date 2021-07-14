@@ -35,6 +35,10 @@ if __name__ == "__main__":
         conf.cur_seed = seed
         np.random.seed(seed)
         torch.manual_seed(seed)
+        if change_teacher:
+            teacher_weights = torch.randn(conf.teacher_n_hidden, conf.n_features)
+            if conf.reverse_mult_by_sqrt:
+                teacher_weights /= np.sqrt(conf.n_features)
         if conf.fix_teacher_change_data:
             train_loader, test_loader = create_dataloaders(conf, teacher_weights)
         weights = torch.randn(conf.n_hidden, conf.n_features, requires_grad=True)
