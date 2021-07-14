@@ -163,9 +163,9 @@ def check_success_sgd(
         train_error /= train_n_batches
         train_loss /= train_n_batches
         if epoch % conf.verbose_freq == 0:
-            to_log = f"#E: {epoch} \t Train L: {train_loss:.5f} \t"
-            to_log += f"Train E: {train_error:.3f} \t Test E: {test_error:.3f} \t"
-            to_log += f"Grad: {max_gradient:.6f}"
+            to_log = f"#E: {epoch} \t Train L: {train_loss:.7f} \t"
+            to_log += f"Train E: {train_error:.7f} \t Test E: {test_error:.7f} \t"
+            to_log += f"Grad: {max_gradient:.7f}"
             conf.logger.info(to_log)
         train_losses.append(train_loss)
         train_errors.append(train_error)
