@@ -1,0 +1,2 @@
+seed,start_seed,teacher_n_hidden,fix_teacher_change_data,reverse_mult_by_sqrt,mult_lr_by_nhidden,activation,second_layer_activation,loss_eps,tau,symmetric_door_k,project_on_sphere,early_stopping_epochs,weight_decay,batch_size,epoch,n_epochs,train_loss,train_error,test_error,n_test
+73,72,20,True,False,True,quadratic,none,1e-08,2.0,0.67449,False,-1,0,1,8,100,2.635268003814417e-09,2.635268003814417e-09,0.1475192904472351,10000
