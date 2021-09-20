@@ -98,7 +98,10 @@ def check_success_sgd(
     momentums = []
     if conf.compute_hessian and conf.save_eigenvalues:
         eigenvalues = {'train': [], 'test': []}
-    for epoch in range(int(conf.n_epochs * np.log2(conf.n_features + 1))):
+    n_epochs = conf.n_epochs
+    if conf.multiply_n_epochs_by_log:
+        n_epochs = int(n_epochs * np.log2(conf.n_features + 1)
+    for epoch in range(n_epochs):
         train_error = 0
         train_loss = 0
         train_n_batches = 0

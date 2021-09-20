@@ -79,6 +79,8 @@ if __name__ == "__main__":
                 "start_seed": conf.start_seed,
                 "teacher_n_hidden": conf.teacher_n_hidden,
                 "fix_teacher_change_data": conf.fix_teacher_change_data,
+                "change_teacher": conf.change_teacher,
+                "multiply_n_epochs_by_log": conf.multiply_n_epochs_by_log,
                 "reverse_mult_by_sqrt": conf.reverse_mult_by_sqrt,
                 "mult_lr_by_nhidden": conf.mult_lr_by_nhidden,
                 "activation": conf.activation,

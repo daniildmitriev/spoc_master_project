@@ -215,6 +215,14 @@ def get_args():
         help="if True, save the momentum each iteration"
     )
     
+    parser.add_argument(
+        "--multiply_n_epochs_by_log", 
+        default=True, 
+        type=str2bool, 
+        help="if True, multiplies the number of epochs by log of dimensionality"
+    )
+    
+    
 
     conf = parser.parse_args()
     return conf
