@@ -100,7 +100,7 @@ def check_success_sgd(
         eigenvalues = {'train': [], 'test': []}
     n_epochs = conf.n_epochs
     if conf.multiply_n_epochs_by_log:
-        n_epochs = int(n_epochs * np.log2(conf.n_features + 1)
+        n_epochs = int(n_epochs * np.log2(conf.n_features + 1))
     for epoch in range(n_epochs):
         train_error = 0
         train_loss = 0
